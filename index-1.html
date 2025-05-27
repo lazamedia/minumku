@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- cdn tailwindcss -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <title>Login</title>
+    <style>
+        .input-field:focus {
+        outline: none;
+        border-color: #4CAF50;
+        box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
+        /* baground body */
+        body {
+            background-image: url('assets/img/baground.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+    </style>
+
+</head>
+<body class=" h-screen items-center content-center">
+    
+    <nav class="fixed w-screen top-0 mx-auto flex justify-center lg:justify-start p-5 lg:px-10">
+        <img src="assets/img/logo.png" alt="" class="h-16">
+    </nav>
+
+
+    <!-- form login -->
+   <div class="w-full max-w-sm bg-gray-200/70  border-2 border-yellow-200 rounded-lg shadow-lg p-8 mx-auto">
+    
+    <h2 class="text-3xl font-semibold text-center text-gray-800 mb-6">Login</h2>
+
+    <form action="#" method="POST">
+      <!-- Username -->
+      <div class="mb-4">
+        <label for="username" class="block text-gray-700 font-medium">Username</label>
+        <input type="text" id="username" name="username" 
+          class="w-full p-3  border-b-2 border-b-gray-800 rounded-lg  input-field">
+      </div>
+
+      <!-- Password -->
+      <div class="mb-3">
+        <label for="password" class="block text-gray-700 font-medium">Password</label>
+        <input type="password" id="password" name="password"
+          class="w-full p-3  border-b-2 border-b-gray-800 rounded-lg  input-field">
+      </div>
+
+      <!-- Remember me & forgot password -->
+      <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center">
+          <input type="checkbox" id="remember" name="remember" class="mr-2">
+          <label for="remember" class="text-gray-700">Remember me</label>
+        </div>
+        <a href="#" class="text-gray-800 hover:text-yellow-600">Forgot Password?</a>
+      </div>
+
+      <!-- Login Button -->
+      <button type="submit" class="w-full bg-yellow-500 text-white py-3 rounded-lg font-semibold hover:bg-yellow-600 transition duration-200">
+        Login
+      </button>
+    </form>
+
+    <div class="mt-4 text-center text-sm text-gray-600">
+      <a href="#" class="text-gray-800 hover:text-gray-600">Dont have an account? Register</a>
+    </div>
+
+  </div>
+
+
+</body>
+</html>

@@ -1,77 +1,182 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <!-- cdn tailwindcss -->
-    <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      box-sizing: border-box;
+    }
 
-    <title>Login</title>
-    <style>
-        .input-field:focus {
-        outline: none;
-        border-color: #4CAF50;
-        box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
-        }
-        /* baground body */
-        body {
-            background-image: url('assets/img/baground.png');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-    </style>
+    body {
+      height: 100vh;
+      background: url('assets/img/baground.png') no-repeat center center/cover;
+      backdrop-filter: blur(2px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
+    .login-box {
+      background: rgba(204, 202, 201, 0.76);
+      border-radius: 15px;
+      padding: 30px;
+      width: 420px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      color: #000000;
+      position: relative;
+      border: 2px solid #575554;
+    }
+
+    .login-box h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      font-weight: bold;
+      color: #000;
+    }
+
+    .input-box {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .input-box input {
+      width: 100%;
+      padding: 10px 35px 10px 10px;
+      border: none;
+      border-bottom: 2px solid #3a3939;
+      background: transparent;
+      color: #000 ;
+      font-size: 14px;
+    }
+
+    .input-box input::placeholder {
+      color: #292525;
+    }
+
+    .input-box input:focus {
+      outline: none;
+    }
+
+    .input-box i {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #585858;
+    }
+
+    .options {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      font-size: 13px;
+      color: #000;
+    }
+
+    .options input[type="checkbox"] {
+      margin-right: 5px;
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 10px;
+      background: #0a0a23;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    .login-btn:hover {
+      background: #1d1d3a;
+    }
+
+    .register-link {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 13px;
+      color: #000;
+    }
+
+    .register-link a {
+      color: #b33300;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #000;
+      color: #fff;
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 25px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .logo{
+        position: absolute;
+        top: 20px;
+        left: 20px;
+    }
+    .logo img {
+        width: 200px;
+        height: auto;
+    }
+    @media (max-width: 768px) {
+      .login-box {
+        width: 90%;
+        max-width: 400px;
+      }
+      .logo {
+        top: 10px;
+        left: auto;
+      }
+    }
+  </style>
 </head>
-<body class=" h-screen items-center content-center">
-    
-    <nav class="fixed w-screen top-0 mx-auto flex justify-center lg:justify-start p-5 lg:px-10">
-        <img src="assets/img/logo.png" alt="" class="h-16">
-    </nav>
+<body>
 
-
-    <!-- form login -->
-   <div class="w-full max-w-sm bg-gray-200/70  border-2 border-yellow-200 rounded-lg shadow-lg p-8 mx-auto">
-    
-    <h2 class="text-3xl font-semibold text-center text-gray-800 mb-6">Login</h2>
-
-    <form action="#" method="POST">
-      <!-- Username -->
-      <div class="mb-4">
-        <label for="username" class="block text-gray-700 font-medium">Username</label>
-        <input type="text" id="username" name="username" 
-          class="w-full p-3  border-b-2 border-b-gray-800 rounded-lg  input-field">
-      </div>
-
-      <!-- Password -->
-      <div class="mb-3">
-        <label for="password" class="block text-gray-700 font-medium">Password</label>
-        <input type="password" id="password" name="password"
-          class="w-full p-3  border-b-2 border-b-gray-800 rounded-lg  input-field">
-      </div>
-
-      <!-- Remember me & forgot password -->
-      <div class="flex items-center justify-between mb-6">
-        <div class="flex items-center">
-          <input type="checkbox" id="remember" name="remember" class="mr-2">
-          <label for="remember" class="text-gray-700">Remember me</label>
-        </div>
-        <a href="#" class="text-gray-800 hover:text-yellow-600">Forgot Password?</a>
-      </div>
-
-      <!-- Login Button -->
-      <button type="submit" class="w-full bg-yellow-500 text-white py-3 rounded-lg font-semibold hover:bg-yellow-600 transition duration-200">
-        Login
-      </button>
-    </form>
-
-    <div class="mt-4 text-center text-sm text-gray-600">
-      <a href="#" class="text-gray-800 hover:text-gray-600">Dont have an account? Register</a>
+    <div class="logo">
+        <img src="assets/img/logo.png" alt="">
     </div>
 
+  <div class="login-box">
+    <h2>Login</h2>
+    <form>
+      <div class="input-box">
+        <input type="text" placeholder="Username" required>
+        <i class="fa-solid fa-user"></i>
+      </div>
+      <div class="input-box">
+        <input type="password" placeholder="Password" required>
+        <i class="fa-solid fa-lock"></i>
+      </div>
+      <div class="options">
+        <label><input type="checkbox"> Remember me</label>
+        <a href="#">Forgot Password?</a>
+      </div>
+      <button type="submit" class="login-btn">Login</button>
+      <div class="register-link">
+        Don't have an account? <a href="#">Register</a>
+      </div>
+    </form>
   </div>
-
 
 </body>
 </html>
