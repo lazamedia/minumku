@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Penjualan - POS System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .loading {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-gray-100">
+    
+    <!-- Navbar Desktop -->
+    <nav class="w-screen fixed top-0 z-40 hidden lg:block glass-effect">
+        <ul class="max-w-screen-xl mx-auto gap-10 flex justify-between items-center content-center p-5">
+            <div class="flex items-center gap-3">
+                <img src="assets/img/logo.png" class="" alt="">
+            </div>
+            <div class="flex gap-3 w-full">
+                <li class="text-white w-full font-semibold py-3 px-6 bg-gradient-to-r from-red-500 to-red-600 rounded-lg text-sm text-center shadow-lg hover:shadow-xl transition-all cursor-pointer" onclick="window.location.href='pos.html'">
+                    <i class="fas fa-cash-register mr-2"></i>Kasir - POS
+                </li>
+                <li class="text-white w-full font-semibold py-3 px-6 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg text-sm text-center shadow-lg hover:shadow-xl transition-all cursor-pointer">
+                    <i class="fas fa-chart-line mr-2"></i>Penjualan
+                </li>
+                <li class="text-white w-full font-semibold py-3 px-6 bg-gradient-to-r from-pink-500 to-pink-600 rounded-lg text-sm text-center shadow-lg hover:shadow-xl transition-all cursor-pointer">
+                    <i class="fas fa-box mr-2"></i>Product
+                </li>
+            </div>
+            <div class="flex gap-3 justify-end w-full">
+                <li class="text-white font-semibold py-3 px-6 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-lg text-sm shadow-lg hover:shadow-xl transition-all cursor-pointer">
+                    <i class="fas fa-cog mr-2"></i>Settings
+                </li>
+                <li class="text-white font-semibold py-3 px-6 bg-gradient-to-r from-red-500 to-red-600 rounded-lg text-sm shadow-lg hover:shadow-xl transition-all cursor-pointer">
+                    <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                </li>
+            </div>
+        </ul>
+    </nav>
+
+    <!-- Navbar Mobile -->
+    <nav class="w-full px-6 fixed top-0 z-40 block lg:hidden bg-white shadow-lg">
+        <div class="flex justify-between items-center py-4">
+            <div class="flex items-center gap-3">
+                <img src="assets/img/logo.png" class="h-16" alt="">
+            </div>
+            <div class="flex gap-3">
+                <button onclick="window.location.href='index.html'" class="py-2 px-4 bg-gradient-to-r from-red-500 to-red-600 rounded-lg text-white">
+                    <i class="fa-solid fa-cash-register"></i>
+                </button>
+                <button class="py-2 px-4 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-lg text-white">
+                    <i class="fa-solid fa-gear"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto mt-24 p-5">
+        
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">
+                <i class="fas fa-chart-line mr-3 text-purple-600"></i>Dashboard Penjualan
+            </h1>
+            <p class="text-gray-600">Pantau performa penjualan dan analisis bisnis Anda</p>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 mb-8 card-hover">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">
+                <i class="fas fa-filter mr-2 text-blue-600"></i>Filter & Pencarian
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Periode</label>
+                    <select id="period-filter" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="today">Hari Ini</option>
+                        <option value="week">Minggu Ini</option>
+                        <option value="month">Bulan Ini</option>
+                        <option value="year">Tahun Ini</option>
+                        <option value="all">Semua</option>
+                        <option value="custom">Kustom</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Metode Pembayaran</label>
+                    <select id="payment-filter" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="all">Semua</option>
+                        <option value="cash">Cash</option>
+                        <option value="qris">QRIS</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Tanggal Mulai</label>
+                    <input type="date" id="start-date" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" disabled>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Tanggal Akhir</label>
+                    <input type="date" id="end-date" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" disabled>
+                </div>
+            </div>
+            <div class="mt-4 flex gap-3">
+                <button onclick="applyFilters()" class="px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-xl hover:from-blue-600 hover:to-blue-700 transition shadow-lg">
+                    <i class="fas fa-search mr-2"></i>Terapkan Filter
+                </button>
+                <button onclick="resetFilters()" class="px-6 py-3 bg-gradient-to-r from-gray-500 to-gray-600 text-white font-semibold rounded-xl hover:from-gray-600 hover:to-gray-700 transition shadow-lg">
+                    <i class="fas fa-refresh mr-2"></i>Reset
+                </button>
+                <button onclick="exportData()" class="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold rounded-xl hover:from-green-600 hover:to-green-700 transition shadow-lg">
+                    <i class="fas fa-download mr-2"></i>Export CSV
+                </button>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl p-6 text-white shadow-lg card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-blue-100 text-sm">Total Penjualan</p>
+                        <p id="total-sales" class="text-2xl font-bold">Rp 0</p>
+                    </div>
+                    <i class="fas fa-money-bill-wave text-3xl text-blue-200"></i>
+                </div>
+            </div>
+            <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-2xl p-6 text-white shadow-lg card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-green-100 text-sm">Jumlah Transaksi</p>
+                        <p id="total-transactions" class="text-2xl font-bold">0</p>
+                    </div>
+                    <i class="fas fa-receipt text-3xl text-green-200"></i>
+                </div>
+            </div>
+            <div class="bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl p-6 text-white shadow-lg card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-purple-100 text-sm">Rata-rata Transaksi</p>
+                        <p id="avg-transaction" class="text-2xl font-bold">Rp 0</p>
+                    </div>
+                    <i class="fas fa-chart-bar text-3xl text-purple-200"></i>
+                </div>
+            </div>
+            <div class="bg-gradient-to-r from-orange-500 to-orange-600 rounded-2xl p-6 text-white shadow-lg card-hover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-orange-100 text-sm">Produk Terjual</p>
+                        <p id="total-items" class="text-2xl font-bold">0</p>
+                    </div>
+                    <i class="fas fa-box text-3xl text-orange-200"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <!-- Sales Chart -->
+            <div class="bg-white rounded-2xl shadow-lg p-6 card-hover">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">
+                    <i class="fas fa-line-chart mr-2 text-blue-600"></i>Tren Penjualan
+                </h2>
+                <div class="relative h-64">
+                    <canvas id="salesChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Payment Method Chart -->
+            <div class="bg-white rounded-2xl shadow-lg p-6 card-hover">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">
+                    <i class="fas fa-credit-card mr-2 text-green-600"></i>Metode Pembayaran
+                </h2>
+                <div class="relative h-64">
+                    <canvas id="paymentChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Products Chart -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 mb-8 card-hover">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">
+                <i class="fas fa-trophy mr-2 text-yellow-600"></i>Produk Terlaris
+            </h2>
+            <div class="relative h-64">
+                <canvas id="topProductsChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Sales Table -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 card-hover">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold text-gray-800">
+                    <i class="fas fa-table mr-2 text-red-600"></i>Data Penjualan
+                </h2>
+                <div class="flex items-center gap-3">
+                    <span class="text-sm text-gray-600">Tampilkan</span>
+                    <select id="entries-per-page" class="p-2 border border-gray-300 rounded-lg text-sm">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                    <span class="text-sm text-gray-600">entri</span>
+                </div>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full border-collapse">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="border border-gray-300 p-3 text-left font-semibold">ID</th>
+                            <th class="border border-gray-300 p-3 text-left font-semibold">Tanggal</th>
+                            <th class="border border-gray-300 p-3 text-left font-semibold">Items</th>
+                            <th class="border border-gray-300 p-3 text-left font-semibold">Total</th>
+                            <th class="border border-gray-300 p-3 text-left font-semibold">Pembayaran</th>
+                            <th class="border border-gray-300 p-3 text-left font-semibold">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sales-table-body">
+                        <tr>
+                            <td colspan="6" class="border border-gray-300 p-8 text-center text-gray-500">
+                                <div class="loading">
+                                    <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
+                                    <p>Memuat data penjualan...</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination -->
+            <div class="flex justify-between items-center mt-6">
+                <div class="text-sm text-gray-600">
+                    Menampilkan <span id="showing-from">0</span> sampai <span id="showing-to">0</span> dari <span id="total-entries">0</span> entri
+                </div>
+                <div class="flex gap-2" id="pagination-container">
+                    <!-- Pagination buttons will be generated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detail Modal -->
+    <div id="detail-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl p-6 w-full max-w-lg animate-fade-in max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-800">Detail Transaksi</h3>
+                <button onclick="closeDetailModal()" class="text-gray-500 hover:text-gray-700 text-2xl">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div id="detail-content" class="space-y-4">
+                <!-- Detail content will be rendered here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data Management
+        let allSales = [];
+        let filteredSales = [];
+        let currentPage = 1;
+        let entriesPerPage = 10;
+        let salesChart, paymentChart, topProductsChart;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSalesData();
+            initializeFilters();
+            initializeCharts();
+            setupEventListeners();
+        });
+
+        function loadSalesData() {
+            // Load from localStorage
+            const savedSales = localStorage.getItem('pos_sales');
+            if (savedSales) {
+                try {
+                    allSales = JSON.parse(savedSales);
+                } catch (e) {
+                    console.error('Error parsing sales data:', e);
+                    allSales = [];
+                }
+            } else {
+                allSales = [];
+            }
+            
+            filteredSales = [...allSales];
+            updateDashboard();
+        }
+
+        function initializeFilters() {
+            const today = new Date();
+            document.getElementById('end-date').value = today.toISOString().split('T')[0];
+            document.getElementById('start-date').value = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+        }
+
+        function setupEventListeners() {
+            document.getElementById('period-filter').addEventListener('change', function() {
+                const isCustom = this.value === 'custom';
+                document.getElementById('start-date').disabled = !isCustom;
+                document.getElementById('end-date').disabled = !isCustom;
+                
+                if (!isCustom) {
+                    applyPeriodFilter(this.value);
+                }
+            });
+
+            document.getElementById('entries-per-page').addEventListener('change', function() {
+                entriesPerPage = parseInt(this.value);
+                currentPage = 1;
+                renderSalesTable();
+                updatePagination();
+            });
+        }
+
+        function applyPeriodFilter(period) {
+            const now = new Date();
+            let startDate = new Date();
+
+            switch (period) {
+                case 'today':
+                    startDate.setHours(0, 0, 0, 0);
+                    break;
+                case 'week':
+                    startDate.setDate(now.getDate() - 7);
+                    break;
+                case 'month':
+                    startDate.setMonth(now.getMonth() - 1);
+                    break;
+                case 'year':
+                    startDate.setFullYear(now.getFullYear() - 1);
+                    break;
+                case 'all':
+                    startDate = new Date(0);
+                    break;
+            }
+
+            if (period !== 'all') {
+                filteredSales = allSales.filter(sale => {
+                    const saleDate = new Date(sale.date);
+                    return saleDate >= startDate && saleDate <= now;
+                });
+            } else {
+                filteredSales = [...allSales];
+            }
+
+            updateDashboard();
+        }
+
+        function applyFilters() {
+            const period = document.getElementById('period-filter').value;
+            const paymentMethod = document.getElementById('payment-filter').value;
+            const startDate = document.getElementById('start-date').value;
+            const endDate = document.getElementById('end-date').value;
+
+            filteredSales = allSales.filter(sale => {
+                let passesFilter = true;
+
+                // Payment method filter
+                if (paymentMethod !== 'all' && sale.paymentMethod !== paymentMethod) {
+                    passesFilter = false;
+                }
+
+                // Date range filter for custom period
+                if (period === 'custom' && startDate && endDate) {
+                    const saleDate = new Date(sale.date);
+                    const start = new Date(startDate);
+                    const end = new Date(endDate);
+                    end.setHours(23, 59, 59, 999);
+                    
+                    if (saleDate < start || saleDate > end) {
+                        passesFilter = false;
+                    }
+                }
+
+                return passesFilter;
+            });
+
+            // Apply period filter if not custom
+            if (period !== 'custom') {
+                applyPeriodFilter(period);
+            }
+
+            currentPage = 1;
+            updateDashboard();
+            showNotification('Filter berhasil diterapkan', 'success');
+        }
+
+        function resetFilters() {
+            document.getElementById('period-filter').value = 'all';
+            document.getElementById('payment-filter').value = 'all';
+            document.getElementById('start-date').disabled = true;
+            document.getElementById('end-date').disabled = true;
+            
+            filteredSales = [...allSales];
+            currentPage = 1;
+            updateDashboard();
+            showNotification('Filter berhasil direset', 'info');
+        }
+
+        function updateDashboard() {
+            updateStatistics();
+            renderSalesTable();
+            updatePagination();
+            updateCharts();
+        }
+
+        function updateStatistics() {
+            const totalSales = filteredSales.reduce((sum, sale) => sum + sale.total, 0);
+            const totalTransactions = filteredSales.length;
+            const avgTransaction = totalTransactions > 0 ? totalSales / totalTransactions : 0;
+            const totalItems = filteredSales.reduce((sum, sale) => 
+                sum + sale.items.reduce((itemSum, item) => itemSum + item.quantity, 0), 0);
+
+            document.getElementById('total-sales').textContent = `Rp ${formatPrice(totalSales)}`;
+            document.getElementById('total-transactions').textContent = totalTransactions;
+            document.getElementById('avg-transaction').textContent = `Rp ${formatPrice(avgTransaction)}`;
+            document.getElementById('total-items').textContent = totalItems;
+        }
+
+        function renderSalesTable() {
+            const tbody = document.getElementById('sales-table-body');
+            const startIndex = (currentPage - 1) * entriesPerPage;
+            const endIndex = startIndex + entriesPerPage;
+            const paginatedSales = filteredSales.slice(startIndex, endIndex);
+
+            if (paginatedSales.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="border border-gray-300 p-8 text-center text-gray-500">
+                            <i class="fas fa-inbox text-4xl mb-3"></i>
+                            <p>Tidak ada data penjualan</p>
+                            <p class="text-sm">Coba ubah filter atau tambah transaksi baru</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = paginatedSales.map((sale, index) => `
+                <tr class="hover:bg-gray-50 transition">
+                    <td class="border border-gray-300 p-3">#${sale.id}</td>
+                    <td class="border border-gray-300 p-3">${formatDate(sale.date)}</td>
+                    <td class="border border-gray-300 p-3">
+                        <div class="text-sm">
+                            ${sale.items.map(item => `${item.name} (${item.quantity}x)`).join('<br>')}
+                        </div>
+                    </td>
+                    <td class="border border-gray-300 p-3 font-semibold text-blue-600">Rp ${formatPrice(sale.total)}</td>
+                    <td class="border border-gray-300 p-3">
+                        <span class="px-2 py-1 rounded-full text-xs font-semibold ${
+                            sale.paymentMethod === 'cash' 
+                                ? 'bg-green-100 text-green-800' 
+                                : 'bg-blue-100 text-blue-800'
+                        }">
+                            ${sale.paymentMethod.toUpperCase()}
+                        </span>
+                    </td>
+                    <td class="border border-gray-300 p-3">
+                        <button onclick="showSaleDetail(${sale.id})" class="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 transition">
+                            <i class="fas fa-eye mr-1"></i>Detail
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+
+            // Update pagination info
+            document.getElementById('showing-from').textContent = startIndex + 1;
+            document.getElementById('showing-to').textContent = Math.min(endIndex, filteredSales.length);
+            document.getElementById('total-entries').textContent = filteredSales.length;
+        }
+
+        function updatePagination() {
+            const totalPages = Math.ceil(filteredSales.length / entriesPerPage);
+            const container = document.getElementById('pagination-container');
+            
+            if (totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let paginationHTML = '';
+            
+            // Previous button
+            paginationHTML += `
+                <button onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''} 
+                        class="px-3 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            `;
+
+            // Page numbers
+            const maxVisiblePages = 5;
+            let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+            let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+            if (endPage - startPage < maxVisiblePages - 1) {
+                startPage = Math.max(1, endPage - maxVisiblePages + 1);
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                paginationHTML += `
+                    <button onclick="changePage(${i})" 
+                            class="px-3 py-2 ${i === currentPage ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'} rounded">
+                        ${i}
+                    </button>
+                `;
+            }
+
+            // Next button
+            paginationHTML += `
+                <button onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''} 
+                        class="px-3 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            `;
+
+            container.innerHTML = paginationHTML;
+        }
+
+        function changePage(page) {
+            const totalPages = Math.ceil(filteredSales.length / entriesPerPage);
+            if (page < 1 || page > totalPages) return;
+            
+            currentPage = page;
+            renderSalesTable();
+            updatePagination();
+        }
+
+        function initializeCharts() {
+            // Sales Chart
+            const salesCtx = document.getElementById('salesChart').getContext('2d');
+            salesChart = new Chart(salesCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Penjualan (Rp)',
+                        data: [],
+                        borderColor: 'rgb(59, 130, 246)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.1,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return 'Rp ' + formatPrice(value);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Payment Method Chart
+            const paymentCtx = document.getElementById('paymentChart').getContext('2d');
+            paymentChart = new Chart(paymentCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Cash', 'QRIS'],
+                    datasets: [{
+                        data: [0, 0],
+                        backgroundColor: [
+                            'rgba(34, 197, 94, 0.8)',
+                            'rgba(59, 130, 246, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgb(34, 197, 94)',
+                            'rgb(59, 130, 246)'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            // Top Products Chart
+            const topProductsCtx = document.getElementById('topProductsChart').getContext('2d');
+            topProductsChart = new Chart(topProductsCtx, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Jumlah Terjual',
+                        data: [],
+                        backgroundColor: 'rgba(168, 85, 247, 0.8)',
+                        borderColor: 'rgb(168, 85, 247)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateCharts() {
+            updateSalesChart();
+            updatePaymentChart();
+            updateTopProductsChart();
+        }
+
+        function updateSalesChart() {
+            // Group sales by date
+            const salesByDate = {};
+            filteredSales.forEach(sale => {
+                const date = new Date(sale.date).toDateString();
+                if (!salesByDate[date]) {
+                    salesByDate[date] = 0;
+                }
+                salesByDate[date] += sale.total;
+            });
+
+            const sortedDates = Object.keys(salesByDate).sort((a, b) => new Date(a) - new Date(b));
+            const labels = sortedDates.map(date => {
+                const d = new Date(date);
+                return d.toLocaleDateString('id-ID', { month: 'short', day: 'numeric' });
+            });
+            const data = sortedDates.map(date => salesByDate[date]);
+
+            salesChart.data.labels = labels;
+            salesChart.data.datasets[0].data = data;
+            salesChart.update();
+        }
+
+        function updatePaymentChart() {
+            const paymentMethods = { cash: 0, qris: 0 };
+            filteredSales.forEach(sale => {
+                paymentMethods[sale.paymentMethod]++;
+            });
+
+            paymentChart.data.datasets[0].data = [paymentMethods.cash, paymentMethods.qris];
+            paymentChart.update();
+        }
+
+        function updateTopProductsChart() {
+            const productCounts = {};
+            filteredSales.forEach(sale => {
+                sale.items.forEach(item => {
+                    if (!productCounts[item.name]) {
+                        productCounts[item.name] = 0;
+                    }
+                    productCounts[item.name] += item.quantity;
+                });
+            });
+
+            const sortedProducts = Object.entries(productCounts)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 10);
+
+            const labels = sortedProducts.map(([name]) => name);
+            const data = sortedProducts.map(([, count]) => count);
+
+            topProductsChart.data.labels = labels;
+            topProductsChart.data.datasets[0].data = data;
+            topProductsChart.update();
+        }
+
+        function showSaleDetail(saleId) {
+            const sale = allSales.find(s => s.id === saleId);
+            if (!sale) return;
+
+            const modal = document.getElementById('detail-modal');
+            const content = document.getElementById('detail-content');
+
+            let itemsHTML = '';
+            sale.items.forEach(item => {
+                itemsHTML += `
+                    <div class="flex justify-between items-center py-2 border-b border-gray-200">
+                        <div>
+                            <span class="font-medium">${item.name}</span>
+                            <span class="text-gray-500 text-sm ml-2">(${item.quantity}x @ Rp ${formatPrice(item.price)})</span>
+                        </div>
+                        <span class="font-semibold">Rp ${formatPrice(item.total)}</span>
+                    </div>
+                `;
+            });
+
+            let paymentInfo = '';
+            if (sale.paymentMethod === 'cash') {
+                paymentInfo = `
+                    <div class="bg-green-50 p-4 rounded-lg">
+                        <div class="flex justify-between mb-2">
+                            <span>Uang Diterima:</span>
+                            <span class="font-semibold">Rp ${formatPrice(sale.cashAmount)}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Kembalian:</span>
+                            <span class="font-semibold">Rp ${formatPrice(sale.change)}</span>
+                        </div>
+                    </div>
+                `;
+            } else {
+                paymentInfo = `
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <div class="flex items-center justify-center">
+                            <i class="fas fa-qrcode text-blue-600 mr-2"></i>
+                            <span class="font-semibold">Pembayaran QRIS</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            content.innerHTML = `
+                <div class="space-y-4">
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h4 class="font-semibold mb-2">Informasi Transaksi</h4>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span>ID Transaksi:</span>
+                                <span class="font-semibold">#${sale.id}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Tanggal:</span>
+                                <span class="font-semibold">${formatDate(sale.date)}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Metode Pembayaran:</span>
+                                <span class="px-2 py-1 rounded-full text-xs font-semibold ${
+                                    sale.paymentMethod === 'cash' 
+                                        ? 'bg-green-100 text-green-800' 
+                                        : 'bg-blue-100 text-blue-800'
+                                }">
+                                    ${sale.paymentMethod.toUpperCase()}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="font-semibold mb-3">Detail Item</h4>
+                        <div class="space-y-1">
+                            ${itemsHTML}
+                        </div>
+                    </div>
+
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg font-semibold">Total:</span>
+                            <span class="text-xl font-bold text-blue-600">Rp ${formatPrice(sale.total)}</span>
+                        </div>
+                    </div>
+
+                    ${paymentInfo}
+                </div>
+            `;
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeDetailModal() {
+            const modal = document.getElementById('detail-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function exportData() {
+            if (filteredSales.length === 0) {
+                showNotification('Tidak ada data untuk diekspor', 'warning');
+                return;
+            }
+
+            const headers = ['ID', 'Tanggal', 'Items', 'Total', 'Pembayaran', 'Uang Diterima', 'Kembalian'];
+            const csvContent = [
+                headers.join(','),
+                ...filteredSales.map(sale => [
+                    sale.id,
+                    formatDate(sale.date),
+                    sale.items.map(item => `${item.name} (${item.quantity}x)`).join('; '),
+                    sale.total,
+                    sale.paymentMethod.toUpperCase(),
+                    sale.cashAmount || 0,
+                    sale.change || 0
+                ].join(','))
+            ].join('\n');
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `penjualan_${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showNotification('Data berhasil diekspor', 'success');
+        }
+
+        // Utility Functions
+        function formatPrice(price) {
+            return new Intl.NumberFormat('id-ID').format(price);
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('id-ID', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg text-white animate-fade-in`;
+            
+            switch (type) {
+                case 'success':
+                    notification.classList.add('bg-green-500');
+                    notification.innerHTML = `<i class="fas fa-check-circle mr-2"></i>${message}`;
+                    break;
+                case 'error':
+                    notification.classList.add('bg-red-500');
+                    notification.innerHTML = `<i class="fas fa-exclamation-circle mr-2"></i>${message}`;
+                    break;
+                case 'warning':
+                    notification.classList.add('bg-yellow-500');
+                    notification.innerHTML = `<i class="fas fa-exclamation-triangle mr-2"></i>${message}`;
+                    break;
+                default:
+                    notification.classList.add('bg-blue-500');
+                    notification.innerHTML = `<i class="fas fa-info-circle mr-2"></i>${message}`;
+            }
+
+            document.body.appendChild(notification);
+
+            // Auto remove after 3 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 3000);
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('detail-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeDetailModal();
+            }
+        });
+    </script>
+</body>
+</html>

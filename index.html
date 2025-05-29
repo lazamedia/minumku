@@ -1,63 +1,527 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <!-- cdn tailwindcss -->
+    <title>POS Kasir - Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- cdn fontawesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .glass-morphism {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .floating-orb {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.7;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .floating-orb:nth-child(1) {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        
+        .floating-orb:nth-child(2) {
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(45deg, #48cae4, #023e8a);
+            top: 60%;
+            right: 15%;
+            animation-delay: -2s;
+        }
+        
+        .floating-orb:nth-child(3) {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #a8edea, #fed6e3);
+            bottom: 20%;
+            left: 20%;
+            animation-delay: -4s;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+        }
+        
+        .input-field {
+            transition: all 0.3s ease;
+        }
+        
+        .input-field:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.2);
+        }
+        
+        .btn-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-gradient:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(124, 58, 237, 0.4);
+        }
+        
+        .card-shadow {
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        
+        .slide-in {
+            animation: slideIn 0.8s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .fade-in {
+            animation: fadeIn 1s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .pulse-icon {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @media (max-width: 768px) {
+            .floating-orb {
+                display: none;
+            }
+        }
+    </style>
 </head>
-<body class="bg-gray-300 h-screen py-10">
-
-    <div class="max-w-screen-lg bg-white mx-auto h-full flex border rounded-3xl overflow-hidden">
-        <div class="w-1/2 bg-purple-500 justify-center items-center content-center px-5">
-            <!-- <img src="assets/img/logo.png" class="h-20 mx-auto" alt=""> -->
-            <h1 class="font-extrabold text-5xl text-white-900 text-center text-white">POS KASIR</h1>
-            <p class="text-center mt-2 text-gray-800">Sistem penjualan berbasis website.</p>
-        </div>
-        <div class="w-1/2  items-center content-center px-10 py-4">
-            <p class="text-gray-500">Hello,</p>
-            <h1 class="text-purple-500 font-bold text-xl -mt-2">Good Morning</h1>
-            <form action="" class="mt-5 p-10 bg-white rounded-lg shadow mx-auto">
-                <h1 class="text-xl text-center mb-7 font-semibold text-gray-800"><font class="text-purple-500">Login</font> Your Account</h1>
-                <!-- Username -->
-                <div class="relative w-full my-6 pt-5">
-                    <input
-                        type="text"
-                        placeholder="Username"
-                        class="w-full bg-transparent border-none border-b-2 border-transparent focus:outline-none text-gray-500 pb-2"
-                    />
-                    <span class="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500"></span>
-                </div>
-
-                <!-- Password -->
-                <div class="relative w-full pt-5">
-                    <input
-                        type="text"
-                        placeholder="Password"
-                        class="w-full bg-transparent border-none border-b-2 border-transparent focus:outline-none text-gray-500 pb-2"
-                    />
-                    <span class="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500"></span>
-                </div>
-
-                <!-- Remember me & forgot password -->
-                <div class="flex items-center justify-between my-6">
-                    <div class="flex items-center">
-                    <input type="checkbox" id="remember" name="remember" class="mr-2">
-                    <label for="remember" class="text-gray-700">Remember me</label>
+<body class="min-h-screen bg-purple-600 relative overflow-hidden">
+    <!-- Floating Orbs -->
+    <div class="floating-orb"></div>
+    <div class="floating-orb"></div>
+    <div class="floating-orb"></div>
+    
+    <!-- Main Container -->
+    <div class="min-h-screen flex items-center justify-center p-4 relative z-10">
+        <div class="w-full max-w-6xl mx-auto">
+            <div class="glass-morphism rounded-3xl card-shadow overflow-hidden slide-in">
+                <div class="flex flex-col lg:flex-row min-h-[600px]">
+                    
+                    <!-- Left Side - Branding -->
+                    <div class="lg:w-1/2 p-8 lg:p-12 flex flex-col justify-center items-center text-white relative">
+                        <div class="text-center fade-in">
+                            <div class="mb-8 pulse-icon">
+                                <i class="fas fa-cash-register text-6xl lg:text-7xl mb-4 text-white"></i>
+                            </div>
+                            <h1 class="text-4xl lg:text-6xl font-bold mb-4 bg-gradient-to-r from-white via-purple-200 to-blue-200 bg-clip-text text-transparent">
+                                POS KASIR
+                            </h1>
+                            <p class="text-lg lg:text-xl text-gray-200 mb-8 max-w-md">
+                                Sistem penjualan berbasis website yang modern dan efisien
+                            </p>
+                        </div>
                     </div>
-                    <a href="#" class="text-gray-800 text-sm hover:text-purple-600">Forgot Password?</a>
+                    
+                    <!-- Right Side - Login Form -->
+                    <div class="lg:w-1/2 p-8 lg:p-12 bg-white bg-opacity-95 backdrop-blur-sm flex flex-col justify-center">
+                        <div class="max-w-md mx-auto w-full slide-in">
+                            
+                            <!-- Greeting -->
+                            <div class="mb-8">
+                                <p class="text-gray-600 text-lg">Halo,</p>
+                                <h2 class="text-3xl font-bold text-gray-800">
+                                    Selamat <span class="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">Datang</span>
+                                </h2>
+                                <p class="text-gray-500 mt-2">Silakan masuk ke akun Anda</p>
+                            </div>
+                            
+                            <!-- Login Form -->
+                            <form id="loginForm" class="space-y-6">
+                                
+                                <!-- Username Field -->
+                                <div class="relative">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        <i class="fas fa-user mr-2 text-purple-500"></i>Username
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="username"
+                                        placeholder="Masukkan username Anda"
+                                        class="input-field w-full px-4 py-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50"
+                                        required
+                                    />
+                                </div>
+                                
+                                <!-- Password Field -->
+                                <div class="relative">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        <i class="fas fa-lock mr-2 text-purple-500"></i>Password
+                                    </label>
+                                    <div class="relative">
+                                        <input
+                                            type="password"
+                                            id="password"
+                                            placeholder="Masukkan password Anda"
+                                            class="input-field w-full px-4 py-4 pr-12 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-gray-50"
+                                            required
+                                        />
+                                        <button
+                                            type="button"
+                                            onclick="togglePassword()"
+                                            class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600"
+                                        >
+                                            <i class="fas fa-eye" id="toggleIcon"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Remember Me & Forgot Password -->
+                                <div class="flex items-center justify-between text-sm">
+                                    <label class="flex items-center">
+                                        <input type="checkbox" id="rememberMe" class="rounded border-gray-300 text-purple-600 focus:ring-purple-500 mr-2">
+                                        <span class="text-gray-600">Ingat saya</span>
+                                    </label>
+                                    <a href="#" class="text-purple-600 hover:text-purple-800 font-medium transition duration-200">
+                                        Lupa password?
+                                    </a>
+                                </div>
+                                
+                                <!-- Login Button -->
+                                <button
+                                    type="submit"
+                                    id="loginBtn"
+                                    class="btn-gradient w-full py-4 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition duration-300 transform hover:scale-[1.02]"
+                                >
+                                    <i class="fas fa-sign-in-alt mr-2"></i>
+                                    Masuk
+                                </button>
+                                
+                                <!-- Message Container -->
+                                <div id="messageContainer" class="mt-4"></div>
+                                
+                            </form>
+                        </div>
+                    </div>
                 </div>
-
-                <!-- Login Button -->
-                <button type="submit" class="w-full bg-purple-500 text-white mt-5 py-3 rounded-lg font-semibold hover:bg-purple-600 transition duration-200">
-                    Login
-                </button>
-            </form>
+            </div>
         </div>
     </div>
+    
+    <script>
+        // ===========================================
+        // AUTH SYSTEM - POS KASIR
+        // ===========================================
+        
+        class POSAuth {
+            constructor() {
+                this.users = this.getValidUsers();
+                this.currentUser = null;
+                this.init();
+            }
+            
+            init() {
+                this.setupEventListeners();
+                this.checkExistingSession();
+                this.createDefaultUsers();
+            }
+            
+            // Fungsi untuk mengambil data user
+            getValidUsers() {
+                try {
+                    const savedUsers = JSON.parse(localStorage.getItem('pos_users') || '[]');
+                    return savedUsers.length > 0 ? savedUsers : [];
+                } catch (error) {
+                    console.error('Error loading users:', error);
+                    return [];
+                }
+            }
+            
+            // Buat user default jika belum ada
+            createDefaultUsers() {
+                if (this.users.length === 0) {
+                    const defaultUsers = [
+                        {
+                            id: 1,
+                            name: 'Administrator',
+                            username: 'admin',
+                            email: 'admin@pos.com',
+                            phone: '081234567890',
+                            role: 'admin',
+                            status: 'active',
+                            password: 'admin123',
+                            createdAt: new Date().toISOString()
+                        },
+                        {
+                            id: 2,
+                            name: 'Kasir 1',
+                            username: 'kasir1',
+                            email: 'kasir1@pos.com',
+                            phone: '081234567891',
+                            role: 'kasir',
+                            status: 'active',
+                            password: 'kasir123',
+                            createdAt: new Date().toISOString()
+                        }
+                    ];
+                    
+                    localStorage.setItem('pos_users', JSON.stringify(defaultUsers));
+                    this.users = defaultUsers;
+                    
+                    // Tampilkan info user default
+                    this.showMessage('info', 'User default telah dibuat:<br>Admin: admin/admin123<br>Kasir: kasir1/kasir123');
+                }
+            }
+            
+            // Setup event listeners
+            setupEventListeners() {
+                // Form submission
+                const loginForm = document.getElementById('loginForm');
+                if (loginForm) {
+                    loginForm.addEventListener('submit', (e) => this.handleLogin(e));
+                }
+                
+                // Input field animations
+                const inputFields = document.querySelectorAll('.input-field');
+                inputFields.forEach(field => {
+                    field.addEventListener('focus', function() {
+                        this.style.transform = 'translateY(-2px)';
+                    });
+                    
+                    field.addEventListener('blur', function() {
+                        this.style.transform = 'translateY(0)';
+                    });
+                });
+            }
+            
+            // Handle login form submission
+            async handleLogin(e) {
+                e.preventDefault();
+                
+                const username = document.getElementById('username').value.trim();
+                const password = document.getElementById('password').value.trim();
+                const rememberMe = document.getElementById('rememberMe').checked;
+                const loginBtn = document.getElementById('loginBtn');
+                
+                // Validate input
+                if (!username || !password) {
+                    this.showMessage('error', 'Username dan password harus diisi!');
+                    return;
+                }
+                
+                // Show loading
+                this.setLoadingState(loginBtn, true);
+                
+                // Simulate network delay
+                setTimeout(() => {
+                    if (this.validateLogin(username, password)) {
+                        this.saveSession(this.currentUser, rememberMe);
+                        this.showMessage('success', 'Login berhasil! Mengalihkan ke halaman POS...');
+                        
+                        setTimeout(() => {
+                            this.redirectToPOS();
+                        }, 1500);
+                    } else {
+                        this.setLoadingState(loginBtn, false);
+                    }
+                }, 1000);
+            }
+            
+            // Validate login credentials
+            validateLogin(username, password) {
+                // Cari user berdasarkan username atau email
+                const user = this.users.find(u => 
+                    (u.username && u.username.toLowerCase() === username.toLowerCase()) ||
+                    (u.email && u.email.toLowerCase() === username.toLowerCase()) ||
+                    (u.name && u.name.toLowerCase() === username.toLowerCase())
+                );
+                
+                if (!user) {
+                    this.showMessage('error', 'Username/Email tidak ditemukan!');
+                    return false;
+                }
+                
+                if (user.status !== 'active') {
+                    this.showMessage('error', 'Akun Anda sedang tidak aktif. Hubungi administrator!');
+                    return false;
+                }
+                
+                if (user.password !== password) {
+                    this.showMessage('error', 'Password salah!');
+                    return false;
+                }
+                
+                this.currentUser = user;
+                return true;
+            }
+            
+            // Save login session
+            saveSession(user, rememberMe = false) {
+                const sessionData = {
+                    userId: user.id,
+                    username: user.name,
+                    email: user.email,
+                    role: user.role,
+                    loginTime: new Date().toISOString(),
+                    isLoggedIn: true
+                };
+                
+                // Save to sessionStorage (temporary)
+                sessionStorage.setItem('userSession', JSON.stringify(sessionData));
+                
+                // Save to localStorage if "Remember Me" is checked
+                if (rememberMe) {
+                    localStorage.setItem('rememberedUser', JSON.stringify(sessionData));
+                }
+            }
+            
+            // Check existing session
+            checkExistingSession() {
+                const session = sessionStorage.getItem('userSession') || 
+                               localStorage.getItem('rememberedUser');
+                
+                if (session) {
+                    const sessionData = JSON.parse(session);
+                    if (sessionData.isLoggedIn) {
+                        this.showMessage('info', 'Anda sudah login. Mengalihkan ke POS...');
+                        setTimeout(() => {
+                            this.redirectToPOS();
+                        }, 1500);
+                    }
+                }
+            }
+            
+            // Redirect to POS html
+            redirectToPOS() {
+                window.location.href = 'pos.html';
+            }
+            // Show simple POS dashboard (for demo)
 
+            // Logout function
+            logout() {
+                sessionStorage.removeItem('userSession');
+                localStorage.removeItem('rememberedUser');
+                window.location.reload();
+            }
+            
+            // Set loading state for button
+            setLoadingState(button, loading) {
+                if (loading) {
+                    button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Memproses...';
+                    button.disabled = true;
+                } else {
+                    button.innerHTML = '<i class="fas fa-sign-in-alt mr-2"></i>Masuk';
+                    button.disabled = false;
+                }
+            }
+            
+            // Show message function
+            showMessage(type, message) {
+                const container = document.getElementById('messageContainer');
+                if (!container) return;
+                
+                // Remove existing messages
+                container.innerHTML = '';
+                
+                // Define styles for different message types
+                const styles = {
+                    error: 'bg-red-100 border border-red-400 text-red-700',
+                    success: 'bg-green-100 border border-green-400 text-green-700',
+                    info: 'bg-blue-100 border border-blue-400 text-blue-700'
+                };
+                
+                const icons = {
+                    error: 'fas fa-exclamation-triangle',
+                    success: 'fas fa-check-circle',
+                    info: 'fas fa-info-circle'
+                };
+                
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `${styles[type]} px-4 py-3 rounded-xl animate-pulse`;
+                messageDiv.innerHTML = `<i class="${icons[type]} mr-2"></i>${message}`;
+                
+                container.appendChild(messageDiv);
+                
+                // Auto remove after 5 seconds for error messages
+                if (type === 'error') {
+                    setTimeout(() => {
+                        if (messageDiv.parentNode) {
+                            messageDiv.remove();
+                        }
+                    }, 5000);
+                }
+            }
+        }
+        
+        // ===========================================
+        // UTILITY FUNCTIONS
+        // ===========================================
+        
+        // Toggle password visibility
+        function togglePassword() {
+            const passwordField = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggleIcon');
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+        
+        // ===========================================
+        // INITIALIZE APPLICATION
+        // ===========================================
+        
+        // Initialize POS Auth when page loads
+        let posAuth;
+        window.addEventListener('DOMContentLoaded', () => {
+            posAuth = new POSAuth();
+        });
+        
+        // For demo purposes - add demo parameter to URL
+        if (!window.location.search.includes('demo=true')) {
+            const url = new URL(window.location);
+            url.searchParams.set('demo', 'true');
+            history.replaceState(null, '', url);
+        }
+    </script>
 </body>
 </html>
