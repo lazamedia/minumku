@@ -57,13 +57,13 @@
                 <img src="assets/img/logo.png" class="" alt="">
             </div>
             <div class="flex gap-3 w-full">
-                <li class="text-white w-full font-semibold py-3 px-6 bg-gradient-to-r from-red-500 to-red-600 rounded-lg text-sm text-center shadow-lg hover:shadow-xl transition-all cursor-pointer" onclick="window.location.href='index.html'">
+                <li class="text-white w-full font-semibold py-3 px-6 bg-gradient-to-r from-red-500 to-red-600 rounded-lg text-sm text-center shadow-lg hover:shadow-xl transition-all cursor-pointer" onclick="window.location.href='pos.html'">
                     <i class="fas fa-cash-register mr-2"></i>Kasir - POS
                 </li>
                 <li class="text-white w-full font-semibold py-3 px-6 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg text-sm text-center shadow-lg hover:shadow-xl transition-all cursor-pointer" onclick="window.location.href='penjualan.html'">
                     <i class="fas fa-chart-line mr-2"></i>Penjualan
                 </li>
-                <li class="text-white w-full font-semibold py-3 px-6 bg-gradient-to-r from-pink-500 to-pink-600 rounded-lg text-sm text-center shadow-lg hover:shadow-xl transition-all cursor-pointer" onclick="window.location.href='index.html'">
+                <li class="text-white w-full font-semibold py-3 px-6 bg-gradient-to-r from-pink-500 to-pink-600 rounded-lg text-sm text-center shadow-lg hover:shadow-xl transition-all cursor-pointer" >
                     <i class="fas fa-box mr-2"></i>Product
                 </li>
             </div>
@@ -71,7 +71,7 @@
                 <li class="text-white font-semibold py-3 px-6 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-lg text-sm shadow-lg hover:shadow-xl transition-all cursor-pointer">
                     <i class="fas fa-cog mr-2"></i>Settings
                 </li>
-                <li class="text-white font-semibold py-3 px-6 bg-gradient-to-r from-red-500 to-red-600 rounded-lg text-sm shadow-lg hover:shadow-xl transition-all cursor-pointer">
+                <li class="text-white font-semibold py-3 px-6 bg-gradient-to-r from-red-500 to-red-600 rounded-lg text-sm shadow-lg hover:shadow-xl transition-all cursor-pointer" onclick="logout()">
                     <i class="fas fa-sign-out-alt mr-2"></i>Logout
                 </li>
             </div>
@@ -82,13 +82,13 @@
     <nav class="w-full px-6 fixed top-0 z-40 block lg:hidden bg-white shadow-lg">
         <div class="flex justify-between items-center py-4">
             <div class="flex items-center gap-3">
-                <button onclick="window.history.back()" class="text-gray-600 hover:text-gray-800 text-xl">
+                <!-- <button onclick="window.history.back()" class="text-gray-600 hover:text-gray-800 text-xl">
                     <i class="fas fa-arrow-left"></i>
-                </button>
+                </button> -->
                 <img src="assets/img/logo.png" class="h-16" alt="">
             </div>
             <div class="flex gap-3">
-                <button onclick="window.location.href='index.html'" class="py-2 px-4 bg-gradient-to-r from-red-500 to-red-600 rounded-lg text-white">
+                <button onclick="window.location.href='pos.html'" class="py-2 px-4 bg-gradient-to-r from-red-500 to-red-600 rounded-lg text-white">
                     <i class="fa-solid fa-home"></i>
                 </button>
             </div>
@@ -148,11 +148,11 @@
                     
                     <div class="flex gap-3">
                         <!-- Search Box -->
-                        <div class="relative">
+                        <!-- <div class="relative">
                             <input type="text" id="search-user" placeholder="Cari user..." 
                                    class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                             <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                        </div>
+                        </div> -->
                         
                         <!-- Add User Button -->
                         <button onclick="showAddUser()" 
@@ -177,9 +177,9 @@
                             <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 <i class="fas fa-envelope mr-2"></i>Email
                             </th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <!-- <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 <i class="fas fa-user-tag mr-2"></i>Role
-                            </th>
+                            </th> -->
                             <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 <i class="fas fa-toggle-on mr-2"></i>Status
                             </th>
@@ -250,18 +250,7 @@
                            placeholder="08xxxxxxxxxx">
                 </div>
 
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">
-                        <i class="fas fa-user-tag mr-2"></i>Role
-                    </label>
-                    <select id="user-role" required 
-                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                        <option value="">Pilih Role</option>
-                        <option value="admin">Admin</option>
-                        <option value="kasir">Kasir</option>
-                        <option value="supervisor">Supervisor</option>
-                    </select>
-                </div>
+                
 
                 <div id="password-section">
                     <label class="block text-sm font-semibold text-gray-700 mb-2">
@@ -337,275 +326,401 @@
 
     <script>
         // Data Management
-        let users = [];
-        let editingUserId = null;
-        let deleteCallback = null;
+let users = [];
+let editingUserId = null;
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            loadUsers();
-            renderUsers();
-            updateStatistics();
-            setupSearchFilter();
-        });
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    loadUsers();
+    renderUsers();
+    updateStatistics();
+    setupSearchFilter();
+    setupFormSubmit();
+});
 
-        // Load users from storage
-        function loadUsers() {
-            try {
-                const savedUsers = JSON.parse(localStorage.getItem('pos_users') || '[]');
-                users = savedUsers;
-                
-                // Add default admin if no users exist
-                if (users.length === 0) {
-                    users = [
-                        {
-                            id: 1,
-                            name: 'Administrator',
-                            email: 'admin@pos.com',
-                            phone: '081234567890',
-                            role: 'admin',
-                            status: 'active',
-                            password: 'admin123',
-                            createdAt: new Date().toISOString()
-                        }
-                    ];
-                    saveUsers();
+// Load users from localStorage
+function loadUsers() {
+    try {
+        const savedUsers = localStorage.getItem('pos_users');
+        if (savedUsers) {
+            users = JSON.parse(savedUsers);
+        }
+        
+        // Add default admin if no users exist
+        if (users.length === 0) {
+            users = [
+                {
+                    id: 1,
+                    username: 'admin',
+                    email: 'admin@pos.com',
+                    password: 'admin123',
+                    status: 'active',
+                    createdAt: new Date().toISOString()
                 }
-            } catch (error) {
-                console.error('Error loading users:', error);
-                showNotification('Error memuat data pengguna!', 'error');
-            }
+            ];
+            saveUsers();
         }
+    } catch (error) {
+        console.error('Error loading users:', error);
+        showNotification('Error memuat data pengguna!', 'error');
+        users = [];
+    }
+}
 
-        // Save users to storage
-        function saveUsers() {
-            try {
-                localStorage.setItem('pos_users', JSON.stringify(users));
-                localStorage.setItem('pos_users_updated', new Date().toISOString());
-            } catch (error) {
-                console.error('Error saving users:', error);
-                showNotification('Error menyimpan data pengguna!', 'error');
-            }
-        }
+// Save users to localStorage
+function saveUsers() {
+    try {
+        localStorage.setItem('pos_users', JSON.stringify(users));
+        localStorage.setItem('pos_users_updated', new Date().toISOString());
+    } catch (error) {
+        console.error('Error saving users:', error);
+        showNotification('Error menyimpan data pengguna!', 'error');
+    }
+}
 
-        // Render users table
-        function renderUsers(filteredUsers = null) {
-            const tbody = document.getElementById('users-table-body');
-            const emptyState = document.getElementById('empty-state');
-            const usersToRender = filteredUsers || users;
+// Generate new user ID
+function generateUserId() {
+    return users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1;
+}
 
-            if (usersToRender.length === 0) {
-                tbody.innerHTML = '';
-                emptyState.classList.remove('hidden');
-                return;
-            }
+// Render users table
+function renderUsers(filteredUsers = null) {
+    const tbody = document.getElementById('users-table-body');
+    const emptyState = document.getElementById('empty-state');
+    const usersToRender = filteredUsers || users;
 
-            emptyState.classList.add('hidden');
-            
-            tbody.innerHTML = usersToRender.map(user => `
-                <tr class="table-row hover:bg-gray-50 transition-all duration-200">
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <span class="text-sm font-medium text-gray-900">#${user.id}</span>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0 h-10 w-10">
-                                <div class="h-10 w-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
-                                    <span class="text-white font-bold text-sm">${user.name.charAt(0).toUpperCase()}</span>
-                                </div>
-                            </div>
-                            <div class="ml-4">
-                                <div class="text-sm font-medium text-gray-900">${user.name}</div>
-                            </div>
+    if (usersToRender.length === 0) {
+        tbody.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+    }
+
+    emptyState.classList.add('hidden');
+    
+    tbody.innerHTML = usersToRender.map(user => `
+        <tr class="table-row hover:bg-gray-50 transition-all duration-200">
+            <td class="px-6 py-4 whitespace-nowrap">
+                <span class="text-sm font-medium text-gray-900">#${user.id}</span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 h-10 w-10">
+                        <div class="h-10 w-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
+                            <span class="text-white font-bold text-sm">${user.username.charAt(0).toUpperCase()}</span>
                         </div>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm text-gray-900">${user.email}</div>
-                        ${user.phone ? `<div class="text-sm text-gray-500">${user.phone}</div>` : ''}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getRoleBadgeClass(user.role)}">
-                            <i class="${getRoleIcon(user.role)} mr-1"></i>
-                            ${capitalizeFirst(user.role)}
-                        </span>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusBadgeClass(user.status)}">
-                            <i class="${getStatusIcon(user.status)} mr-1"></i>
-                            ${user.status === 'active' ? 'Aktif' : 'Tidak Aktif'}
-                        </span>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        ${formatDate(user.createdAt)}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                        <button onclick="editUser(${user.id})" 
-                                class="text-yellow-600 hover:text-yellow-900 bg-yellow-100 hover:bg-yellow-200 px-3 py-1 rounded-lg transition">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button onclick="toggleUserStatus(${user.id})" 
-                                class="text-blue-600 hover:text-blue-900 bg-blue-100 hover:bg-blue-200 px-3 py-1 rounded-lg transition">
-                            <i class="fas fa-toggle-${user.status === 'active' ? 'off' : 'on'}"></i>
-                        </button>
-                        <button onclick="deleteUser(${user.id})" 
-                                class="text-red-600 hover:text-red-900 bg-red-100 hover:bg-red-200 px-3 py-1 rounded-lg transition">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-        }
+                    </div>
+                    <div class="ml-4">
+                        <div class="text-sm font-medium text-gray-900">${user.username}</div>
+                    </div>
+                </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-900">${user.email}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusBadgeClass(user.status)}">
+                    <i class="${getStatusIcon(user.status)} mr-1"></i>
+                    ${user.status === 'active' ? 'Aktif' : 'Tidak Aktif'}
+                </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                ${formatDate(user.createdAt)}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                <button onclick="editUser(${user.id})" 
+                        class="text-yellow-600 hover:text-yellow-900 bg-yellow-100 hover:bg-yellow-200 px-3 py-1 rounded-lg transition">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button onclick="toggleUserStatus(${user.id})" 
+                        class="text-blue-600 hover:text-blue-900 bg-blue-100 hover:bg-blue-200 px-3 py-1 rounded-lg transition">
+                    <i class="fas fa-toggle-${user.status === 'active' ? 'off' : 'on'}"></i>
+                </button>
+                <button onclick="deleteUser(${user.id})" 
+                        class="text-red-600 hover:text-red-900 bg-red-100 hover:bg-red-200 px-3 py-1 rounded-lg transition">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        </tr>
+    `).join('');
+}
 
-        // Helper functions for styling
-        function getRoleBadgeClass(role) {
-            switch (role) {
-                case 'admin': return 'bg-red-100 text-red-800';
-                case 'supervisor': return 'bg-blue-100 text-blue-800';
-                case 'kasir': return 'bg-green-100 text-green-800';
-                default: return 'bg-gray-100 text-gray-800';
-            }
-        }
+// Helper functions for styling
+function getStatusBadgeClass(status) {
+    return status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
+}
 
-        function getRoleIcon(role) {
-            switch (role) {
-                case 'admin': return 'fas fa-crown';
-                case 'supervisor': return 'fas fa-user-tie';
-                case 'kasir': return 'fas fa-cash-register';
-                default: return 'fas fa-user';
-            }
-        }
+function getStatusIcon(status) {
+    return status === 'active' ? 'fas fa-check-circle' : 'fas fa-times-circle';
+}
 
-        function getStatusBadgeClass(status) {
-            return status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
-        }
+function formatDate(dateString) {
+    return new Date(dateString).toLocaleDateString('id-ID', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+    });
+}
 
-        function getStatusIcon(status) {
-            return status === 'active' ? 'fas fa-check-circle' : 'fas fa-times-circle';
-        }
+// Update statistics
+function updateStatistics() {
+    const totalUsers = users.length;
+    const activeUsers = users.filter(u => u.status === 'active').length;
+    
+    document.getElementById('total-users').textContent = totalUsers;
+    document.getElementById('active-users').textContent = activeUsers;
+}
 
-        function capitalizeFirst(str) {
-            return str.charAt(0).toUpperCase() + str.slice(1);
-        }
-
-        function formatDate(dateString) {
-            return new Date(dateString).toLocaleDateString('id-ID', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric'
-            });
-        }
-
-        // Update statistics
-        function updateStatistics() {
-            const totalUsers = users.length;
-            const activeUsers = users.filter(u => u.status === 'active').length;
-            
-            document.getElementById('total-users').textContent = totalUsers;
-            document.getElementById('active-users').textContent = activeUsers;
-        }
-
-        // Search functionality
-        function setupSearchFilter() {
-            const searchInput = document.getElementById('search-user');
-            searchInput.addEventListener('input', function() {
-                const query = this.value.toLowerCase().trim();
-                
-                if (query === '') {
-                    renderUsers();
-                    return;
-                }
-
-                const filteredUsers = users.filter(user => 
-                    user.name.toLowerCase().includes(query) ||
-                    user.email.toLowerCase().includes(query) ||
-                    user.role.toLowerCase().includes(query)
-                );
-
-                renderUsers(filteredUsers);
-            });
-        }
-
-        // Modal functions
-        function showAddUser() {
-            editingUserId = null;
-            document.getElementById('user-modal-title').textContent = 'Tambah User Baru';
-            document.getElementById('save-btn-text').textContent = 'Simpan';
-            document.getElementById('user-form').reset();
-            document.getElementById('password-section').classList.remove('hidden');
-            document.getElementById('user-password').required = true;
-            document.getElementById('user-modal').classList.remove('hidden');
-            document.getElementById('user-modal').classList.add('flex');
-        }
-
-        function closeUserModal() {
-            document.getElementById('user-modal').classList.add('hidden');
-            document.getElementById('user-modal').classList.remove('flex');
-            document.getElementById('user-form').reset();
-            editingUserId = null;
-        }
-
-        function editUser(userId) {
-            const user = users.find(u => u.id === userId);
-            if (!user) return;
-
-            editingUserId = userId;
-            document.getElementById('user-modal-title').textContent = 'Edit User';
-            document.getElementById('save-btn-text').textContent = 'Update';
-            
-            // Fill form
-            document.getElementById('user-name').value = user.name;
-            document.getElementById('user-email').value = user.email;
-            document.getElementById('user-phone').value = user.phone || '';
-            document.getElementById('user-role').value = user.role;
-            document.querySelector(`input[name="user-status"][value="${user.status}"]`).checked = true;
-            
-            // Hide password field for editing
-            document.getElementById('password-section').classList.add('hidden');
-            document.getElementById('user-password').required = false;
-            
-            document.getElementById('user-modal').classList.remove('hidden');
-            document.getElementById('user-modal').classList.add('flex');
-        }
-
-        function toggleUserStatus(userId) {
-            const user = users.find(u => u.id === userId);
-            if (!user) return;
-
-            user.status = user.status === 'active' ? 'inactive' : 'active';
-            saveUsers();
+// Search functionality
+function setupSearchFilter() {
+    const searchInput = document.getElementById('search-user');
+    searchInput.addEventListener('input', function() {
+        const query = this.value.toLowerCase().trim();
+        
+        if (query === '') {
             renderUsers();
-            updateStatistics();
+            return;
+        }
+
+        const filteredUsers = users.filter(user => 
+            user.username.toLowerCase().includes(query) ||
+            user.email.toLowerCase().includes(query)
+        );
+
+        renderUsers(filteredUsers);
+    });
+}
+
+// Form submission
+function setupFormSubmit() {
+    const form = document.getElementById('user-form');
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        saveUserData();
+    });
+}
+
+// Modal functions
+function showAddUser() {
+    editingUserId = null;
+    document.getElementById('user-modal-title').textContent = 'Tambah User Baru';
+    document.getElementById('save-btn-text').textContent = 'Simpan';
+    document.getElementById('user-form').reset();
+    document.querySelector('input[name="user-status"][value="active"]').checked = true;
+    document.getElementById('password-section').classList.remove('hidden');
+    document.getElementById('user-password').required = true;
+    document.getElementById('user-modal').classList.remove('hidden');
+    document.getElementById('user-modal').classList.add('flex');
+}
+
+function closeUserModal() {
+    document.getElementById('user-modal').classList.add('hidden');
+    document.getElementById('user-modal').classList.remove('flex');
+    document.getElementById('user-form').reset();
+    editingUserId = null;
+}
+
+function editUser(userId) {
+    const user = users.find(u => u.id === userId);
+    if (!user) return;
+
+    editingUserId = userId;
+    document.getElementById('user-modal-title').textContent = 'Edit User';
+    document.getElementById('save-btn-text').textContent = 'Update';
+    
+    // Fill form
+    document.getElementById('user-name').value = user.username;
+    document.getElementById('user-email').value = user.email;
+    document.querySelector(`input[name="user-status"][value="${user.status}"]`).checked = true;
+    
+    // Hide password field for editing
+    document.getElementById('password-section').classList.add('hidden');
+    document.getElementById('user-password').required = false;
+    
+    document.getElementById('user-modal').classList.remove('hidden');
+    document.getElementById('user-modal').classList.add('flex');
+}
+
+// Save user data (Create/Update)
+function saveUserData() {
+    const username = document.getElementById('user-name').value.trim();
+    const email = document.getElementById('user-email').value.trim();
+    const password = document.getElementById('user-password').value;
+    const status = document.querySelector('input[name="user-status"]:checked').value;
+
+    // Validation
+    if (!username || !email) {
+        showNotification('Username dan email harus diisi!', 'error');
+        return;
+    }
+
+    if (!editingUserId && (!password || password.length < 6)) {
+        showNotification('Password minimal 6 karakter!', 'error');
+        return;
+    }
+
+    // Check if email already exists (except for current user when editing)
+    const existingUser = users.find(u => u.email === email && u.id !== editingUserId);
+    if (existingUser) {
+        showNotification('Email sudah digunakan!', 'error');
+        return;
+    }
+
+    // Check if username already exists (except for current user when editing)
+    const existingUsername = users.find(u => u.username === username && u.id !== editingUserId);
+    if (existingUsername) {
+        showNotification('Username sudah digunakan!', 'error');
+        return;
+    }
+
+    if (editingUserId) {
+        // Update existing user
+        const userIndex = users.findIndex(u => u.id === editingUserId);
+        if (userIndex !== -1) {
+            users[userIndex] = {
+                ...users[userIndex],
+                username: username,
+                email: email,
+                status: status,
+                updatedAt: new Date().toISOString()
+            };
             
-            const statusText = user.status === 'active' ? 'diaktifkan' : 'dinonaktifkan';
-            showNotification(`User ${user.name} berhasil ${statusText}`, 'success');
+            // Update password only if provided
+            if (password && password.length >= 6) {
+                users[userIndex].password = password;
+            }
+            
+            showNotification('User berhasil diupdate!', 'success');
         }
+    } else {
+        // Create new user
+        const newUser = {
+            id: generateUserId(),
+            username: username,
+            email: email,
+            password: password,
+            status: status,
+            createdAt: new Date().toISOString()
+        };
+        
+        users.push(newUser);
+        showNotification('User berhasil ditambahkan!', 'success');
+    }
 
-        function deleteUser(userId) {
-            const user = users.find(u => u.id === userId);
-            if (!user) return;
+    saveUsers();
+    renderUsers();
+    updateStatistics();
+    closeUserModal();
+}
 
-            document.getElementById('delete-message').textContent = 
-                `Yakin ingin menghapus user "${user.name}"? Tindakan ini tidak dapat dibatalkan.`;
-            document.getElementById('delete-modal').classList.remove('hidden');
-            document.getElementById('delete-modal').classList.add('flex');
-        }
+function toggleUserStatus(userId) {
+    const user = users.find(u => u.id === userId);
+    if (!user) return;
 
-        function closeDeleteModal() {
-            document.getElementById('delete-modal').classList.add('hidden');
-            document.getElementById('delete-modal').classList.remove('flex');
-        }
+    user.status = user.status === 'active' ? 'inactive' : 'active';
+    user.updatedAt = new Date().toISOString();
+    
+    saveUsers();
+    renderUsers();
+    updateStatistics();
+    
+    const statusText = user.status === 'active' ? 'diaktifkan' : 'dinonaktifkan';
+    showNotification(`User ${user.username} berhasil ${statusText}`, 'success');
+}
 
-        function confirmDelete() {
-            const user = users.find(u => u.id === editingUserId);
-            if (!user) return;
+function deleteUser(userId) {
+    const user = users.find(u => u.id === userId);
+    if (!user) return;
 
-            users = users.filter(u => u.id !== user.id);
-            saveUsers();
-            renderUsers();
-            updateStatistics();
-            closeDeleteModal();
-            showNotification(`User "${user.name}" berhasil dihapus`, 'success');
-        }
+    // Prevent deleting the last admin user
+    if (user.username === 'admin' && users.length === 1) {
+        showNotification('Tidak dapat menghapus admin terakhir!', 'error');
+        return;
+    }
+
+    document.getElementById('delete-message').textContent = 
+        `Yakin ingin menghapus user "${user.username}"? Tindakan ini tidak dapat dibatalkan.`;
+    
+    // Store user ID for deletion
+    deleteCallback = () => {
+        users = users.filter(u => u.id !== userId);
+        saveUsers();
+        renderUsers();
+        updateStatistics();
+        showNotification(`User "${user.username}" berhasil dihapus`, 'success');
+    };
+    
+    document.getElementById('delete-modal').classList.remove('hidden');
+    document.getElementById('delete-modal').classList.add('flex');
+}
+
+function closeDeleteModal() {
+    document.getElementById('delete-modal').classList.add('hidden');
+    document.getElementById('delete-modal').classList.remove('flex');
+    deleteCallback = null;
+}
+
+function confirmDelete() {
+    if (deleteCallback) {
+        deleteCallback();
+        deleteCallback = null;
+    }
+    closeDeleteModal();
+}
+
+// Password toggle
+function togglePassword() {
+    const passwordInput = document.getElementById('user-password');
+    const toggleIcon = document.getElementById('password-toggle-icon');
+    
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleIcon.classList.remove('fa-eye');
+        toggleIcon.classList.add('fa-eye-slash');
+    } else {
+        passwordInput.type = 'password';
+        toggleIcon.classList.remove('fa-eye-slash');
+        toggleIcon.classList.add('fa-eye');
+    }
+}
+
+// Notification system
+function showNotification(message, type = 'info') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg transform translate-x-full transition-transform duration-300 ${
+        type === 'success' ? 'bg-green-500 text-white' :
+        type === 'error' ? 'bg-red-500 text-white' :
+        type === 'warning' ? 'bg-yellow-500 text-white' :
+        'bg-blue-500 text-white'
+    }`;
+    
+    notification.innerHTML = `
+        <div class="flex items-center">
+            <i class="fas ${
+                type === 'success' ? 'fa-check-circle' :
+                type === 'error' ? 'fa-exclamation-circle' :
+                type === 'warning' ? 'fa-exclamation-triangle' :
+                'fa-info-circle'
+            } mr-2"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Show notification
+    setTimeout(() => {
+        notification.classList.remove('translate-x-full');
+    }, 100);
+    
+    // Hide notification after 3 seconds
+    setTimeout(() => {
+        notification.classList.add('translate-x-full');
+        setTimeout(() => {
+            document.body.removeChild(notification);
+        }, 300);
+    }, 3000);
+}
     </script>
 </body>
 </html>

@@ -40,7 +40,7 @@
                 <img src="assets/img/logo.png" class="" alt="">
             </div>
             <div class="flex gap-3 w-full">
-                <li class="text-white w-full font-semibold py-3 px-6 bg-gradient-to-r from-red-500 to-red-600 rounded-lg text-sm text-center shadow-lg hover:shadow-xl transition-all cursor-pointer">
+                <li class="text-white w-full font-semibold py-3 px-6 bg-gradient-to-r from-red-500 to-red-600 rounded-lg text-sm text-center shadow-lg hover:shadow-xl transition-all cursor-pointer" onclick="window.location.href='pos.html'">
                     <i class="fas fa-cash-register mr-2"></i>Kasir - POS
                 </li>
                 <li class="text-white w-full font-semibold py-3 px-6 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg text-sm text-center shadow-lg hover:shadow-xl transition-all cursor-pointer" onclick="window.location.href='penjualan.html'">
@@ -51,10 +51,10 @@
                 </li>
             </div>
             <div class="flex gap-3 justify-end w-full">
-                <li class="text-white font-semibold py-3 px-6 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-lg text-sm shadow-lg hover:shadow-xl transition-all cursor-pointer">
+                <li class="text-white font-semibold py-3 px-6 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-lg text-sm shadow-lg hover:shadow-xl transition-all cursor-pointer" onclick="window.location.href='setting.html'">
                     <i class="fas fa-cog mr-2"></i>Settings
                 </li>
-                <li class="text-white font-semibold py-3 px-6 bg-gradient-to-r from-red-500 to-red-600 rounded-lg text-sm shadow-lg hover:shadow-xl transition-all cursor-pointer">
+                <li class="text-white font-semibold py-3 px-6 bg-gradient-to-r from-red-500 to-red-600 rounded-lg text-sm shadow-lg hover:shadow-xl transition-all cursor-pointer" onclick="logout()" >
                     <i class="fas fa-sign-out-alt mr-2"></i>Logout
                 </li>
             </div>
@@ -71,7 +71,7 @@
                 <button onclick="showProductManager()" class="py-2 px-4 bg-gradient-to-r from-pink-500 to-pink-600 rounded-lg text-white">
                     <i class="fa-solid fa-box"></i>
                 </button>
-                <button class="py-2 px-4 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-lg text-white">
+                <button class="py-2 px-4 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-lg text-white" onclick="window.location.href='setting.html'">
                     <i class="fa-solid fa-gear"></i>
                 </button>
             </div>
@@ -360,7 +360,7 @@
         </div>
     </div>
 
-    <!-- <script src="assets/js/script.js"></script> -->
+    <script src="script.js"></script>
     <script>
 // Data Management
 let products = [
