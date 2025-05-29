@@ -1,5 +1,11 @@
-// Data Management
-let products = [];
+
+let products = [
+    { id: 1, name: "Es Teh Original", price: 15000, image: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=300&h=200&fit=crop" },
+    { id: 2, name: "Es Jeruk Segar", price: 18000, image: "https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=300&h=200&fit=crop" },
+    { id: 3, name: "Kopi Hitam", price: 12000, image: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=300&h=200&fit=crop" },
+    { id: 4, name: "Cappuccino", price: 25000, image: "https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=300&h=200&fit=crop" },
+];
+
 let cart = [];
 let sales = [];
 let currentProduct = null;
@@ -11,72 +17,114 @@ let currentSelection = {
 };
 let selectedPaymentMethod = null;
 
-// Google Apps Script URL
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzUy967NDWx1CTVZf_QmWeaW96DnRK-aPtiXZ6xbavKvS4tQw6rZA-BwkLYxEnr8autAA/exec';
-
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
-    loadProducts();
+    loadData();
+    renderProducts();
     updateCart();
 });
 
-// API Functions
-async function apiCall(action, data = {}) {
+// Data persistence functions with localStorage
+function saveData() {
     try {
-        const response = await fetch(SCRIPT_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                action: action,
-                ...data
-            })
-        });
+        // Save products to localStorage
+        localStorage.setItem('pos_products', JSON.stringify(products));
         
-        const result = await response.json();
+        // Save sales to localStorage
+        localStorage.setItem('pos_sales', JSON.stringify(sales));
         
-        if (!result.success) {
-            throw new Error(result.error || 'API call failed');
-        }
+        // Save timestamp
+        localStorage.setItem('pos_last_updated', new Date().toISOString());
         
-        return result.data;
+        console.log('Data saved to localStorage successfully');
     } catch (error) {
-        console.error('API Error:', error);
-        showNotification('Terjadi kesalahan koneksi ke server', 'error');
-        throw error;
+        console.error('Error saving data to localStorage:', error);
+        showNotification('Error menyimpan data!', 'error');
     }
 }
 
-// Data loading functions
-async function loadProducts() {
+function loadData() {
     try {
-        showLoading(true);
-        products = await apiCall('getProducts');
-        renderProducts();
-        showNotification('Data produk berhasil dimuat', 'success');
+        // Load products from localStorage
+        const savedProducts = localStorage.getItem('pos_products');
+        if (savedProducts) {
+            products = JSON.parse(savedProducts);
+            console.log('Products loaded from localStorage:', products.length, 'items');
+        }
+        
+        // Load sales from localStorage
+        const savedSales = localStorage.getItem('pos_sales');
+        if (savedSales) {
+            sales = JSON.parse(savedSales);
+            console.log('Sales loaded from localStorage:', sales.length, 'transactions');
+        }
+        
+        // Load timestamp
+        const lastUpdated = localStorage.getItem('pos_last_updated');
+        if (lastUpdated) {
+            console.log('Data last updated:', new Date(lastUpdated).toLocaleString('id-ID'));
+        }
+        
     } catch (error) {
-        console.error('Failed to load products:', error);
-        // Use default products if API fails
+        console.error('Error loading data from localStorage:', error);
+        showNotification('Error memuat data!', 'error');
+        
+        // Reset to default data if loading fails
         products = [
             { id: 1, name: "Es Teh Original", price: 15000, image: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=300&h=200&fit=crop" },
             { id: 2, name: "Es Jeruk Segar", price: 18000, image: "https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=300&h=200&fit=crop" },
             { id: 3, name: "Kopi Hitam", price: 12000, image: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=300&h=200&fit=crop" },
             { id: 4, name: "Cappuccino", price: 25000, image: "https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=300&h=200&fit=crop" },
         ];
-        renderProducts();
-    } finally {
-        showLoading(false);
+        sales = [];
     }
 }
 
-async function loadSales() {
+// Additional function to clear all data (for testing/reset purposes)
+function clearAllData() {
+    if (confirm('Yakin ingin menghapus semua data? Tindakan ini tidak dapat dibatalkan!')) {
+        localStorage.removeItem('pos_products');
+        localStorage.removeItem('pos_sales');
+        localStorage.removeItem('pos_last_updated');
+        
+        // Reset to default data
+        products = [
+            { id: 1, name: "Es Teh Original", price: 15000, image: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=300&h=200&fit=crop" },
+            { id: 2, name: "Es Jeruk Segar", price: 18000, image: "https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=300&h=200&fit=crop" },
+            { id: 3, name: "Kopi Hitam", price: 12000, image: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=300&h=200&fit=crop" },
+            { id: 4, name: "Cappuccino", price: 25000, image: "https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=300&h=200&fit=crop" },
+        ];
+        sales = [];
+        cart = [];
+        
+        renderProducts();
+        updateCart();
+        showNotification('Semua data berhasil dihapus dan direset!', 'success');
+    }
+}
+
+// Export data functions
+function exportData() {
     try {
-        sales = await apiCall('getSales');
-        return sales;
+        const data = {
+            products: products,
+            sales: sales,
+            exportDate: new Date().toISOString(),
+            version: '1.0'
+        };
+        
+        const dataStr = JSON.stringify(data, null, 2);
+        const dataBlob = new Blob([dataStr], {type: 'application/json'});
+        
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(dataBlob);
+        link.download = `pos_backup_${new Date().toISOString().split('T')[0]}.json`;
+        link.click();
+        
+        showNotification('Data berhasil diekspor!', 'success');
     } catch (error) {
-        console.error('Failed to load sales:', error);
-        return [];
+        console.error('Error exporting data:', error);
+        showNotification('Error mengekspor data!', 'error');
     }
 }
 
@@ -175,18 +223,32 @@ function addToCart() {
     let price = currentProduct.price;
     if (currentSelection.size === 'large') price += 5000;
 
-    const cartItem = {
-        id: Date.now(),
-        productId: currentProduct.id,
-        name: currentProduct.name,
-        size: currentSelection.size,
-        temp: currentSelection.temp,
-        quantity: currentSelection.quantity,
-        price: price,
-        total: price * currentSelection.quantity
-    };
+    // Check if item with same variant already exists
+    const existingItemIndex = cart.findIndex(item => 
+        item.productId === currentProduct.id && 
+        item.size === currentSelection.size && 
+        item.temp === currentSelection.temp
+    );
 
-    cart.push(cartItem);
+    if (existingItemIndex !== -1) {
+        // Update existing item quantity
+        cart[existingItemIndex].quantity += currentSelection.quantity;
+        cart[existingItemIndex].total = cart[existingItemIndex].price * cart[existingItemIndex].quantity;
+    } else {
+        // Add new item to cart
+        const cartItem = {
+            id: Date.now(),
+            productId: currentProduct.id,
+            name: currentProduct.name,
+            size: currentSelection.size,
+            temp: currentSelection.temp,
+            quantity: currentSelection.quantity,
+            price: price,
+            total: price * currentSelection.quantity
+        };
+        cart.push(cartItem);
+    }
+
     updateCart();
     closeProductModal();
     
@@ -235,9 +297,6 @@ function updateCart() {
                 </p>
             </div>
             <div class="flex gap-2">
-                <button onclick="editCartItem(${item.id})" class="text-yellow-600 hover:text-yellow-800 transition">
-                    <i class="fas fa-edit"></i>
-                </button>
                 <button onclick="removeCartItem(${item.id})" class="text-red-600 hover:text-red-800 transition">
                     <i class="fas fa-trash"></i>
                 </button>
@@ -250,33 +309,18 @@ function updateCart() {
 }
 
 function removeCartItem(itemId) {
-    cart = cart.filter(item => item.id !== itemId);
-    updateCart();
-    showNotification('Item berhasil dihapus dari keranjang', 'info');
-}
-
-function editCartItem(itemId) {
     const item = cart.find(i => i.id === itemId);
     if (!item) return;
 
-    const product = products.find(p => p.id === item.productId);
-    if (!product) return;
-
-    // Remove current item and open modal with current settings
-    removeCartItem(itemId);
-    currentProduct = product;
-    currentSelection = {
-        size: item.size,
-        temp: item.temp,
-        quantity: item.quantity
-    };
-    
-    document.getElementById('modal-product-name').textContent = product.name;
-    document.getElementById('product-modal').classList.remove('hidden');
-    document.getElementById('product-modal').classList.add('flex');
-    
-    updateModalSelections();
-    updateModalPrice();
+    showDeleteConfirmation(
+        'Hapus Item',
+        `Yakin ingin menghapus "${item.name}" dari keranjang?`,
+        () => {
+            cart = cart.filter(item => item.id !== itemId);
+            updateCart();
+            showNotification('Item berhasil dihapus dari keranjang', 'success');
+        }
+    );
 }
 
 // Mobile cart functions
@@ -369,7 +413,7 @@ document.getElementById('cash-amount').addEventListener('input', function() {
     }
 });
 
-async function processPayment() {
+function processPayment() {
     if (!selectedPaymentMethod) return;
 
     const total = cart.reduce((sum, item) => sum + item.total, 0);
@@ -382,34 +426,27 @@ async function processPayment() {
         }
     }
 
-    try {
-        showLoading(true);
+    // Save sale
+    const sale = {
+        id: Date.now(),
+        date: new Date().toISOString(),
+        items: [...cart],
+        total: total,
+        paymentMethod: selectedPaymentMethod,
+        cashAmount: selectedPaymentMethod === 'cash' ? parseFloat(document.getElementById('cash-amount').value) : total,
+        change: selectedPaymentMethod === 'cash' ? parseFloat(document.getElementById('cash-amount').value) - total : 0
+    };
 
-        // Save sale to Google Sheets
-        const sale = {
-            date: new Date().toISOString(),
-            items: [...cart],
-            total: total,
-            paymentMethod: selectedPaymentMethod,
-            cashAmount: selectedPaymentMethod === 'cash' ? parseFloat(document.getElementById('cash-amount').value) : total,
-            change: selectedPaymentMethod === 'cash' ? parseFloat(document.getElementById('cash-amount').value) - total : 0
-        };
+    sales.push(sale);
+    saveData(); // Save to localStorage
 
-        const savedSale = await apiCall('addSale', { sale });
+    // Clear cart
+    cart = [];
+    updateCart();
+    closeCheckout();
 
-        // Clear cart
-        cart = [];
-        updateCart();
-        closeCheckout();
-
-        showNotification('Pembayaran berhasil diproses!', 'success');
-        showReceipt({ ...sale, id: savedSale.id });
-    } catch (error) {
-        console.error('Payment processing failed:', error);
-        showNotification('Gagal memproses pembayaran. Silakan coba lagi.', 'error');
-    } finally {
-        showLoading(false);
-    }
+    showNotification('Pembayaran berhasil diproses!', 'success');
+    showReceipt(sale);
 }
 
 function resetCheckout() {
@@ -536,29 +573,25 @@ function editProduct(productId) {
     document.getElementById('add-product-modal').classList.add('flex');
 }
 
-async function deleteProduct(productId) {
-    if (!confirm('Apakah Anda yakin ingin menghapus produk ini?')) return;
-    
-    try {
-        showLoading(true);
-        await apiCall('deleteProduct', { productId });
-        
-        // Remove from local array
-        products = products.filter(p => p.id !== productId);
-        renderProducts();
-        renderProductTable();
-        
-        showNotification('Produk berhasil dihapus', 'success');
-    } catch (error) {
-        console.error('Failed to delete product:', error);
-        showNotification('Gagal menghapus produk', 'error');
-    } finally {
-        showLoading(false);
-    }
+function deleteProduct(productId) {
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+
+    showDeleteConfirmation(
+        'Hapus Produk',
+        `Yakin ingin menghapus produk "${product.name}"? Tindakan ini tidak dapat dibatalkan.`,
+        () => {
+            products = products.filter(p => p.id !== productId);
+            renderProducts();
+            renderProductTable();
+            saveData(); // Save to localStorage
+            showNotification('Produk berhasil dihapus', 'success');
+        }
+    );
 }
 
 // Add/Edit product form handler
-document.getElementById('add-product-form').addEventListener('submit', async function(e) {
+document.getElementById('add-product-form').addEventListener('submit', function(e) {
     e.preventDefault();
     
     const productData = {
@@ -567,37 +600,85 @@ document.getElementById('add-product-form').addEventListener('submit', async fun
         image: document.getElementById('product-image').value || 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=300&h=200&fit=crop'
     };
 
-    try {
-        showLoading(true);
-
-        if (editingProductId) {
-            // Update existing product
-            const updatedProduct = { id: editingProductId, ...productData };
-            await apiCall('updateProduct', { product: updatedProduct });
-            
-            const productIndex = products.findIndex(p => p.id === editingProductId);
-            if (productIndex !== -1) {
-                products[productIndex] = updatedProduct;
-            }
-            
+    if (editingProductId) {
+        // Update existing product
+        const productIndex = products.findIndex(p => p.id === editingProductId);
+        if (productIndex !== -1) {
+            products[productIndex] = { ...products[productIndex], ...productData };
             showNotification('Produk berhasil diupdate', 'success');
-        } else {
-            // Add new product
-            const newProduct = await apiCall('addProduct', { product: productData });
-            products.push(newProduct);
-            showNotification('Produk berhasil ditambahkan', 'success');
         }
-
-        renderProducts();
-        renderProductTable();
-        closeAddProduct();
-    } catch (error) {
-        console.error('Failed to save product:', error);
-        showNotification('Gagal menyimpan produk', 'error');
-    } finally {
-        showLoading(false);
+    } else {
+        // Add new product
+        const newProduct = {
+            id: Date.now(),
+            ...productData
+        };
+        products.push(newProduct);
+        showNotification('Produk berhasil ditambahkan', 'success');
     }
+
+    renderProducts();
+    renderProductTable();
+    closeAddProduct();
+    saveData(); // Save to localStorage
 });
+
+// Custom confirmation dialog for delete actions
+function showDeleteConfirmation(title, message, onConfirm) {
+    const confirmationHTML = `
+        <div class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" id="delete-confirmation">
+            <div class="bg-white rounded-2xl p-6 w-full max-w-md animate-fade-in transform scale-95 animate-bounce-in">
+                <div class="text-center mb-6">
+                    <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 mb-4">
+                        <i class="fas fa-exclamation-triangle text-red-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">${title}</h3>
+                    <p class="text-gray-600">${message}</p>
+                </div>
+                
+                <div class="flex gap-3">
+                    <button onclick="closeDeleteConfirmation()" class="flex-1 py-3 px-4 bg-gray-200 text-gray-800 font-semibold rounded-xl hover:bg-gray-300 transition">
+                        <i class="fas fa-times mr-2"></i>Batal
+                    </button>
+                    <button onclick="confirmDelete()" class="flex-1 py-3 px-4 bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold rounded-xl hover:from-red-600 hover:to-red-700 transition shadow-lg">
+                        <i class="fas fa-trash mr-2"></i>Hapus
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', confirmationHTML);
+    
+    // Store the callback function
+    window.deleteConfirmationCallback = onConfirm;
+    
+    // Add bounce animation
+    setTimeout(() => {
+        const modal = document.querySelector('#delete-confirmation .animate-bounce-in');
+        if (modal) {
+            modal.classList.remove('scale-95');
+            modal.classList.add('scale-100');
+        }
+    }, 10);
+}
+
+function closeDeleteConfirmation() {
+    const confirmation = document.getElementById('delete-confirmation');
+    if (confirmation) {
+        confirmation.remove();
+    }
+    delete window.deleteConfirmationCallback;
+}
+
+function confirmDelete() {
+    if (window.deleteConfirmationCallback) {
+        window.deleteConfirmationCallback();
+    }
+    closeDeleteConfirmation();
+}
+
+
 
 // Utility functions
 function formatPrice(price) {
@@ -629,29 +710,6 @@ function showNotification(message, type = 'info') {
     }, 3000);
 }
 
-function showLoading(show = true) {
-    let loadingEl = document.getElementById('loading-indicator');
-    
-    if (show) {
-        if (!loadingEl) {
-            loadingEl = document.createElement('div');
-            loadingEl.id = 'loading-indicator';
-            loadingEl.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center';
-            loadingEl.innerHTML = `
-                <div class="bg-white rounded-lg p-6 flex items-center gap-3">
-                    <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-                    <span class="text-gray-700">Memproses...</span>
-                </div>
-            `;
-            document.body.appendChild(loadingEl);
-        }
-    } else {
-        if (loadingEl) {
-            loadingEl.remove();
-        }
-    }
-}
-
 // Close modals when clicking outside
 document.addEventListener('click', function(e) {
     if (e.target.classList.contains('bg-black')) {
@@ -679,5 +737,34 @@ document.addEventListener('keydown', function(e) {
                 modal.classList.remove('flex');
             }
         });
+        
+        // Close delete confirmation if open
+        closeDeleteConfirmation();
     }
 });
+
+// Add CSS for bounce animation
+const style = document.createElement('style');
+style.textContent = `
+    .animate-bounce-in {
+        animation: bounceIn 0.3s ease-out;
+    }
+    
+    @keyframes bounceIn {
+        0% {
+            transform: scale(0.3);
+            opacity: 0;
+        }
+        50% {
+            transform: scale(1.05);
+        }
+        70% {
+            transform: scale(0.9);
+        }
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+`;
+document.head.appendChild(style);
