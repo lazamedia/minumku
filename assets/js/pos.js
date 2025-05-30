@@ -1,9 +1,10 @@
 
 let products = [
-    { id: 1, name: "Es Teh Original", price: 15000, image: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=300&h=200&fit=crop" },
-    { id: 2, name: "Es Jeruk Segar", price: 18000, image: "https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=300&h=200&fit=crop" },
-    { id: 3, name: "Kopi Hitam", price: 12000, image: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=300&h=200&fit=crop" },
-    { id: 4, name: "Cappuccino", price: 25000, image: "https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=300&h=200&fit=crop" },
+    { id: 1, name: "Es Teh Original"    , price: 3000, image: "https://png.pngtree.com/png-clipart/20240622/original/pngtree-plastic-jumbo-cup-iced-tea-vector-png-image_15387450.png" },
+    { id: 2, name: "Es Teh Mangga"      , price: 5000, image: "https://png.pngtree.com/png-clipart/20240622/original/pngtree-plastic-jumbo-cup-iced-tea-vector-png-image_15387450.png" },
+    { id: 3, name: "Es Teh Leci"        , price: 5000, image: "https://png.pngtree.com/png-clipart/20240622/original/pngtree-plastic-jumbo-cup-iced-tea-vector-png-image_15387450.png" },
+    { id: 4, name: "Es Teh Melon"       , price: 5000, image: "https://png.pngtree.com/png-clipart/20240622/original/pngtree-plastic-jumbo-cup-iced-tea-vector-png-image_15387450.png" },
+    { id: 4, name: "Es Teh Jeruk"       , price: 5000, image: "https://png.pngtree.com/png-clipart/20240622/original/pngtree-plastic-jumbo-cup-iced-tea-vector-png-image_15387450.png" },
 ];
 
 let cart = [];
@@ -134,7 +135,7 @@ function renderProducts(filter = 'all') {
     const filteredProducts = products;
     
     productGrid.innerHTML = filteredProducts.map(product => `
-        <div class="product-card bg-white rounded-2xl shadow-lg overflow-hidden cursor-pointer" onclick="openProductModal(${product.id})">
+        <div class="product-card bg-white rounded-2xl shadow-lg border border-gray-400 overflow-hidden cursor-pointer" onclick="openProductModal(${product.id})">
             <div class="relative overflow-hidden">
                 <img src="${product.image}" class="w-full h-48 object-cover" alt="${product.name}" onerror="this.src='https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=300&h=200&fit=crop'">
                 <div class="absolute top-3 right-3 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold">
