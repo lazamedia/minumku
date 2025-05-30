@@ -4,4 +4,4 @@
     localStorage.removeItem('rememberedUser');
     // Redirect kembali ke halaman login
     window.location.href = 'index.html';
-  }
+  } 

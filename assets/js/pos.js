@@ -600,7 +600,7 @@ document.getElementById('add-product-form').addEventListener('submit', function(
         image: document.getElementById('product-image').value || 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=300&h=200&fit=crop'
     };
 
-    if (editingProductId) {
+    if (editingProductId) { 
         // Update existing product
         const productIndex = products.findIndex(p => p.id === editingProductId);
         if (productIndex !== -1) {
@@ -613,12 +613,12 @@ document.getElementById('add-product-form').addEventListener('submit', function(
             id: Date.now(),
             ...productData
         };
-        products.push(newProduct);
+        products.push(newProduct); 
         showNotification('Produk berhasil ditambahkan', 'success');
     }
 
     renderProducts();
-    renderProductTable();
+    renderProductTable(); 
     closeAddProduct();
     saveData(); // Save to localStorage
 });

@@ -1,36 +1,37 @@
+let allSales = []; // Menyimpan semua data penjualan
+let filteredSales = []; // Menyimpan data penjualan yang sudah disaring
+let currentPage = 1; // Halaman yang sedang ditampilkan
+let entriesPerPage = 10; // Jumlah data yang ditampilkan per halaman
+let salesChart; // Grafik penjualan
 
-let allSales = [];
-let filteredSales = [];
-let currentPage = 1;
-let entriesPerPage = 10;
-let salesChart;
-
-// Initialize
+// Mulai program ketika halaman sudah siap
 document.addEventListener('DOMContentLoaded', function() {
-    // Wait a bit to ensure Chart.js is loaded
+    // Tunggu sebentar untuk memastikan semua file sudah dimuat
     setTimeout(() => {
-        loadSalesData();
-        initializeChart();
-        setupEventListeners();
+        loadSalesData(); // Muat data penjualan
+        initializeChart(); // Buat grafik
+        setupEventListeners(); // Siapkan tombol-tombol
     }, 100);
 });
 
 function loadSalesData() {
-    // Generate more comprehensive demo data
-    const now = new Date();
-    const demoSales = [];
+    // Buat data contoh penjualan yang lebih lengkap
+    const now = new Date(); // Tanggal hari ini
+    const demoSales = []; // Tempat menyimpan data contoh
     
-    // Generate sales for last 30 days
+    // Buat data penjualan untuk 30 hari terakhir
     for (let i = 0; i < 30; i++) {
-        const saleDate = new Date(now.getTime() - (i * 24 * 60 * 60 * 1000));
-        const numSales = Math.floor(Math.random() * 5) + 1; // 1-5 sales per day
+        const saleDate = new Date(now.getTime() - (i * 24 * 60 * 60 * 1000)); // Tanggal mundur dari hari ini
+        const numSales = Math.floor(Math.random() * 5) + 1; // Acak antara 1-5 penjualan per hari
         
+        // Buat beberapa penjualan untuk setiap hari
         for (let j = 0; j < numSales; j++) {
-            const saleId = demoSales.length + 1;
-            const items = generateRandomItems();
-            const total = items.reduce((sum, item) => sum + item.total, 0);
-            const paymentMethod = Math.random() > 0.6 ? 'qris' : 'cash';
+            const saleId = demoSales.length + 1; // Nomor urut penjualan
+            const items = generateRandomItems(); // Buat daftar barang yang dibeli
+            const total = items.reduce((sum, item) => sum + item.total, 0); // Hitung total harga
+            const paymentMethod = Math.random() > 0.6 ? 'qris' : 'cash'; // Pilih cara bayar secara acak
             
+            // Buat data penjualan
             const sale = {
                 id: saleId,
                 date: new Date(saleDate.getTime() + (j * 60 * 60 * 1000)).toISOString(),
@@ -39,40 +40,42 @@ function loadSalesData() {
                 paymentMethod: paymentMethod
             };
             
+            // Jika bayar tunai, hitung uang kembalian
             if (paymentMethod === 'cash') {
-                sale.cashAmount = Math.ceil(total / 5000) * 5000;
-                sale.change = sale.cashAmount - total;
+                sale.cashAmount = Math.ceil(total / 5000) * 5000; // Bulatkan ke kelipatan 5000
+                sale.change = sale.cashAmount - total; // Hitung kembalian
             }
             
-            demoSales.push(sale);
+            demoSales.push(sale); // Masukkan ke daftar
         }
     }
     
-    // Try to load from localStorage, fallback to demo data
+    // Coba ambil data dari penyimpanan browser, jika tidak ada pakai data contoh
     const savedSales = localStorage.getItem('pos_sales');
     if (savedSales) {
         try {
             const parsed = JSON.parse(savedSales);
             if (Array.isArray(parsed) && parsed.length > 0) {
-                allSales = parsed;
+                allSales = parsed; // Gunakan data tersimpan
             } else {
-                allSales = demoSales;
+                allSales = demoSales; // Gunakan data contoh
             }
         } catch (e) {
             console.error('Error parsing sales data:', e);
-            allSales = demoSales;
+            allSales = demoSales; // Jika error, pakai data contoh
         }
     } else {
-        allSales = demoSales;
+        allSales = demoSales; // Jika tidak ada data, pakai data contoh
     }
     
-    // Sort by date descending
+    // Urutkan berdasarkan tanggal terbaru dulu
     allSales.sort((a, b) => new Date(b.date) - new Date(a.date));
-    filteredSales = [...allSales];
-    updateDashboard();
+    filteredSales = [...allSales]; // Salin semua data ke daftar filter
+    updateDashboard(); // Perbarui tampilan
 }
 
 function generateRandomItems() {
+    // Daftar produk yang tersedia
     const products = [
         { name: 'Kopi Hitam', price: 15000 },
         { name: 'Kopi Susu', price: 18000 },
@@ -86,17 +89,18 @@ function generateRandomItems() {
         { name: 'Jus Alpukat', price: 15000 }
     ];
     
-    const numItems = Math.floor(Math.random() * 3) + 1;
-    const items = [];
+    const numItems = Math.floor(Math.random() * 3) + 1; // Pilih 1-3 jenis barang
+    const items = []; // Daftar barang yang dibeli
     
+    // Buat daftar barang yang dibeli secara acak
     for (let i = 0; i < numItems; i++) {
-        const product = products[Math.floor(Math.random() * products.length)];
-        const quantity = Math.floor(Math.random() * 3) + 1;
+        const product = products[Math.floor(Math.random() * products.length)]; // Pilih produk acak
+        const quantity = Math.floor(Math.random() * 3) + 1; // Pilih jumlah 1-3
         items.push({
             name: product.name,
             quantity: quantity,
             price: product.price,
-            total: quantity * product.price
+            total: quantity * product.price // Hitung total per barang
         });
     }
     
@@ -104,48 +108,57 @@ function generateRandomItems() {
 }
 
 function setupEventListeners() {
+    // Pasang pengawas untuk filter periode waktu
     document.getElementById('period-filter').addEventListener('change', applyFilters);
+    // Pasang pengawas untuk filter metode pembayaran
     document.getElementById('payment-filter').addEventListener('change', applyFilters);
     
+    // Pasang pengawas untuk mengubah jumlah data per halaman
     document.getElementById('entries-per-page').addEventListener('change', function() {
-        entriesPerPage = parseInt(this.value);
-        currentPage = 1;
-        renderSalesTable();
-        updatePagination();
+        entriesPerPage = parseInt(this.value); // Ambil nilai yang dipilih
+        currentPage = 1; // Kembali ke halaman pertama
+        renderSalesTable(); // Tampilkan ulang tabel
+        updatePagination(); // Perbarui navigasi halaman
     });
 }
 
 function applyFilters() {
+    // Ambil nilai filter yang dipilih
     const period = document.getElementById('period-filter').value;
     const paymentMethod = document.getElementById('payment-filter').value;
 
+    // Saring data berdasarkan filter
     filteredSales = allSales.filter(sale => {
-        let passesFilter = true;
+        let passesFilter = true; // Anggap lolos filter dulu
 
+        // Cek filter metode pembayaran
         if (paymentMethod !== 'all' && sale.paymentMethod !== paymentMethod) {
             passesFilter = false;
         }
 
+        // Cek filter periode waktu
         if (period !== 'all') {
             const now = new Date();
             const saleDate = new Date(sale.date);
             let startDate = new Date();
 
+            // Tentukan tanggal mulai berdasarkan periode
             switch (period) {
                 case 'today':
-                    startDate.setHours(0, 0, 0, 0);
+                    startDate.setHours(0, 0, 0, 0); // Mulai dari jam 00:00 hari ini
                     break;
                 case 'week':
-                    startDate.setDate(now.getDate() - 7);
+                    startDate.setDate(now.getDate() - 7); // 7 hari yang lalu
                     break;
                 case 'month':
-                    startDate.setMonth(now.getMonth() - 1);
+                    startDate.setMonth(now.getMonth() - 1); // 1 bulan yang lalu
                     break;
                 case 'year':
-                    startDate.setFullYear(now.getFullYear() - 1);
+                    startDate.setFullYear(now.getFullYear() - 1); // 1 tahun yang lalu
                     break;
             }
 
+            // Cek apakah tanggal penjualan dalam rentang yang diinginkan
             if (saleDate < startDate || saleDate > now) {
                 passesFilter = false;
             }
@@ -154,37 +167,44 @@ function applyFilters() {
         return passesFilter;
     });
 
-    currentPage = 1;
-    updateDashboard();
-    showNotification('Filter berhasil diterapkan', 'success');
+    currentPage = 1; // Kembali ke halaman pertama
+    updateDashboard(); // Perbarui tampilan
+    showNotification('Filter berhasil diterapkan', 'success'); // Tampilkan pesan sukses
 }
 
 function resetFilters() {
+    // Kembalikan filter ke pengaturan awal
     document.getElementById('period-filter').value = 'all';
     document.getElementById('payment-filter').value = 'all';
     
-    filteredSales = [...allSales];
-    currentPage = 1;
-    updateDashboard();
-    showNotification('Filter berhasil direset', 'info');
+    filteredSales = [...allSales]; // Tampilkan semua data
+    currentPage = 1; // Kembali ke halaman pertama
+    updateDashboard(); // Perbarui tampilan
+    showNotification('Filter berhasil direset', 'info'); // Tampilkan pesan info
 }
 
 function updateDashboard() {
-    updateStatistics();
-    renderSalesTable();
-    updatePagination();
+    // Perbarui semua bagian tampilan
+    updateStatistics(); // Perbarui statistik
+    renderSalesTable(); // Perbarui tabel penjualan
+    updatePagination(); // Perbarui navigasi halaman
     if (salesChart) {
-        updateChart();
+        updateChart(); // Perbarui grafik jika ada
     }
 }
 
 function updateStatistics() {
+    // Hitung total penjualan
     const totalSales = filteredSales.reduce((sum, sale) => sum + sale.total, 0);
+    // Hitung jumlah transaksi
     const totalTransactions = filteredSales.length;
+    // Hitung rata-rata per transaksi
     const avgTransaction = totalTransactions > 0 ? totalSales / totalTransactions : 0;
+    // Hitung total barang terjual
     const totalItems = filteredSales.reduce((sum, sale) => 
         sum + sale.items.reduce((itemSum, item) => itemSum + item.quantity, 0), 0);
 
+    // Tampilkan statistik di layar
     document.getElementById('total-sales').textContent = `Rp ${formatPrice(totalSales)}`;
     document.getElementById('total-transactions').textContent = totalTransactions;
     document.getElementById('avg-transaction').textContent = `Rp ${formatPrice(avgTransaction)}`;
@@ -193,10 +213,12 @@ function updateStatistics() {
 
 function renderSalesTable() {
     const tbody = document.getElementById('sales-table-body');
+    // Hitung data yang akan ditampilkan di halaman ini
     const startIndex = (currentPage - 1) * entriesPerPage;
     const endIndex = startIndex + entriesPerPage;
     const paginatedSales = filteredSales.slice(startIndex, endIndex);
 
+    // Jika tidak ada data, tampilkan pesan kosong
     if (paginatedSales.length === 0) {
         tbody.innerHTML = `
             <tr>
@@ -210,6 +232,7 @@ function renderSalesTable() {
         return;
     }
 
+    // Buat baris tabel untuk setiap penjualan
     tbody.innerHTML = paginatedSales.map((sale, index) => `
         <tr class="hover:bg-gray-50 transition">
             <td class="border border-gray-300 p-3">#${sale.id}</td>
@@ -237,15 +260,18 @@ function renderSalesTable() {
         </tr>
     `).join('');
 
+    // Perbarui info jumlah data yang ditampilkan
     document.getElementById('showing-from').textContent = startIndex + 1;
     document.getElementById('showing-to').textContent = Math.min(endIndex, filteredSales.length);
     document.getElementById('total-entries').textContent = filteredSales.length;
 }
 
 function updatePagination() {
+    // Hitung jumlah halaman yang dibutuhkan
     const totalPages = Math.ceil(filteredSales.length / entriesPerPage);
     const container = document.getElementById('pagination-container');
     
+    // Jika hanya 1 halaman atau kurang, sembunyikan navigasi
     if (totalPages <= 1) {
         container.innerHTML = '';
         return;
@@ -253,6 +279,7 @@ function updatePagination() {
 
     let paginationHTML = '';
     
+    // Tombol halaman sebelumnya
     paginationHTML += `
         <button onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''} 
                 class="px-3 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed">
@@ -260,6 +287,7 @@ function updatePagination() {
         </button>
     `;
 
+    // Hitung halaman mana saja yang akan ditampilkan
     const maxVisiblePages = 5;
     let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
     let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
@@ -268,6 +296,7 @@ function updatePagination() {
         startPage = Math.max(1, endPage - maxVisiblePages + 1);
     }
 
+    // Buat tombol untuk setiap halaman
     for (let i = startPage; i <= endPage; i++) {
         paginationHTML += `
             <button onclick="changePage(${i})" 
@@ -277,6 +306,7 @@ function updatePagination() {
         `;
     }
 
+    // Tombol halaman selanjutnya
     paginationHTML += `
         <button onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''} 
                 class="px-3 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed">
@@ -288,179 +318,25 @@ function updatePagination() {
 }
 
 function changePage(page) {
+    // Hitung total halaman
     const totalPages = Math.ceil(filteredSales.length / entriesPerPage);
+    // Pastikan halaman yang diminta valid
     if (page < 1 || page > totalPages) return;
     
-    currentPage = page;
-    renderSalesTable();
-    updatePagination();
-}
-
-function initializeChart() {
-    // Check if Chart.js is loaded
-    if (typeof Chart === 'undefined') {
-        console.error('Chart.js is not loaded');
-        setTimeout(initializeChart, 500); // Retry after 500ms
-        return;
-    }
-
-    try {
-        const ctx = document.getElementById('salesChart');
-        if (!ctx) {
-            console.error('Canvas element not found');
-            return;
-        }
-
-        const context = ctx.getContext('2d');
-        if (!context) {
-            console.error('Cannot get 2D context');
-            return;
-        }
-
-        // Destroy existing chart if it exists
-        if (salesChart) {
-            salesChart.destroy();
-        }
-
-        salesChart = new Chart(context, {
-            type: 'line',
-            data: {
-                labels: [],
-                datasets: [{
-                    label: 'Penjualan (Rp)',
-                    data: [],
-                    borderColor: '#3b82f6',
-                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                    tension: 0.4,
-                    fill: true,
-                    pointBackgroundColor: '#3b82f6',
-                    pointBorderColor: '#ffffff',
-                    pointBorderWidth: 2,
-                    pointRadius: 4,
-                    pointHoverRadius: 6
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top',
-                        labels: {
-                            usePointStyle: true,
-                            padding: 20
-                        }
-                    },
-                    tooltip: {
-                        mode: 'index',
-                        intersect: false,
-                        callbacks: {
-                            label: function(context) {
-                                return `Penjualan: Rp ${formatPrice(context.parsed.y)}`;
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        display: true,
-                        title: {
-                            display: true,
-                            text: 'Tanggal'
-                        },
-                        grid: {
-                            display: false
-                        }
-                    },
-                    y: {
-                        display: true,
-                        title: {
-                            display: true,
-                            text: 'Penjualan (Rp)'
-                        },
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return 'Rp ' + formatPrice(value);
-                            }
-                        }
-                    }
-                },
-                interaction: {
-                    mode: 'index',
-                    intersect: false
-                },
-                elements: {
-                    point: {
-                        hoverRadius: 8
-                    }
-                }
-            }
-        });
-
-        console.log('Chart initialized successfully');
-        updateChart();
-
-    } catch (error) {
-        console.error('Error initializing chart:', error);
-    }
-}
-
-function updateChart() {
-    if (!salesChart) {
-        console.log('Chart not initialized yet');
-        return;
-    }
-
-    try {
-        // Group sales by date
-        const salesByDate = {};
-        filteredSales.forEach(sale => {
-            const date = new Date(sale.date).toISOString().split('T')[0];
-            if (!salesByDate[date]) {
-                salesByDate[date] = 0;
-            }
-            salesByDate[date] += sale.total;
-        });
-
-        // Sort dates and get last 14 days
-        const sortedDates = Object.keys(salesByDate).sort();
-        const last14Days = sortedDates.slice(-14);
-        
-        if (last14Days.length === 0) {
-            // No data available
-            salesChart.data.labels = ['Tidak ada data'];
-            salesChart.data.datasets[0].data = [0];
-        } else {
-            const labels = last14Days.map(date => {
-                const d = new Date(date);
-                return d.toLocaleDateString('id-ID', { 
-                    day: '2-digit',
-                    month: 'short'
-                });
-            });
-            const data = last14Days.map(date => salesByDate[date]);
-
-            salesChart.data.labels = labels;
-            salesChart.data.datasets[0].data = data;
-        }
-
-        salesChart.update('none'); // Update without animation for better performance
-        console.log('Chart updated successfully');
-
-    } catch (error) {
-        console.error('Error updating chart:', error);
-    }
+    currentPage = page; // Ubah halaman aktif
+    renderSalesTable(); // Tampilkan data halaman baru
+    updatePagination(); // Perbarui navigasi halaman
 }
 
 function showSaleDetail(saleId) {
+    // Cari data penjualan berdasarkan ID
     const sale = allSales.find(s => s.id === saleId);
     if (!sale) return;
 
     const modal = document.getElementById('detail-modal');
     const content = document.getElementById('detail-content');
 
+    // Buat tampilan daftar barang
     let itemsHTML = '';
     sale.items.forEach(item => {
         itemsHTML += `
@@ -474,8 +350,10 @@ function showSaleDetail(saleId) {
         `;
     });
 
+    // Buat tampilan info pembayaran
     let paymentInfo = '';
     if (sale.paymentMethod === 'cash') {
+        // Untuk pembayaran tunai, tampilkan uang diterima dan kembalian
         paymentInfo = `
             <div class="bg-green-50 p-4 rounded-lg">
                 <div class="flex justify-between mb-2">
@@ -489,6 +367,7 @@ function showSaleDetail(saleId) {
             </div>
         `;
     } else {
+        // Untuk pembayaran digital
         paymentInfo = `
             <div class="bg-blue-50 p-4 rounded-lg">
                 <div class="flex justify-between">
@@ -499,6 +378,7 @@ function showSaleDetail(saleId) {
         `;
     }
 
+    // Tampilkan detail lengkap dalam popup
     content.innerHTML = `
         <div class="space-y-4">
             <div class="bg-gray-50 p-4 rounded-lg">
@@ -534,24 +414,29 @@ function showSaleDetail(saleId) {
         </div>
     `;
 
+    // Tampilkan popup
     modal.classList.remove('hidden');
     modal.classList.add('flex');
 }
 
 function closeDetailModal() {
+    // Sembunyikan popup detail
     const modal = document.getElementById('detail-modal');
     modal.classList.add('hidden');
     modal.classList.remove('flex');
 }
 
 function exportData() {
+    // Cek apakah ada data untuk diekspor
     if (filteredSales.length === 0) {
         showNotification('Tidak ada data untuk diekspor', 'warning');
         return;
     }
     
+    // Buat header file CSV
     let csvContent = 'ID,Tanggal,Items,Total,Metode Pembayaran,Uang Diterima,Kembalian\n';
     
+    // Tambahkan setiap baris data
     filteredSales.forEach(sale => {
         const items = sale.items.map(item => `${item.name} (${item.quantity}x)`).join('; ');
         const cashAmount = sale.cashAmount || 0;
@@ -560,6 +445,7 @@ function exportData() {
         csvContent += `${sale.id},"${formatDateTime(sale.date)}","${items}",${sale.total},${sale.paymentMethod.toUpperCase()},${cashAmount},${change}\n`;
     });
     
+    // Buat file dan download
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
@@ -573,12 +459,14 @@ function exportData() {
     showNotification('Data berhasil diekspor ke CSV', 'success');
 }
 
-// Utility Functions
+// Fungsi-fungsi bantuan untuk format tampilan
 function formatPrice(price) {
+    // Format angka menjadi format rupiah Indonesia
     return new Intl.NumberFormat('id-ID').format(Math.round(price));
 }
 
 function formatDate(dateString) {
+    // Format tanggal menjadi format Indonesia (contoh: 15 Jan 2024)
     const date = new Date(dateString);
     return date.toLocaleDateString('id-ID', {
         day: '2-digit',
@@ -588,6 +476,7 @@ function formatDate(dateString) {
 }
 
 function formatDateTime(dateString) {
+    // Format tanggal dan waktu lengkap (contoh: 15 Jan 2024, 14:30)
     const date = new Date(dateString);
     return date.toLocaleString('id-ID', {
         day: '2-digit',
@@ -599,23 +488,26 @@ function formatDateTime(dateString) {
 }
 
 function showNotification(message, type = 'info') {
+    // Buat kotak pesan notifikasi
     const notification = document.createElement('div');
     notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg text-white max-w-sm animate-fade-in`;
     
+    // Tentukan warna berdasarkan jenis pesan
     switch (type) {
         case 'success':
-            notification.className += ' bg-green-500';
+            notification.className += ' bg-green-500'; // Hijau untuk sukses
             break;
         case 'error':
-            notification.className += ' bg-red-500';
+            notification.className += ' bg-red-500'; // Merah untuk error
             break;
         case 'warning':
-            notification.className += ' bg-yellow-500';
+            notification.className += ' bg-yellow-500'; // Kuning untuk peringatan
             break;
         default:
-            notification.className += ' bg-blue-500';
+            notification.className += ' bg-blue-500'; // Biru untuk info
     }
     
+    // Isi pesan dengan tombol tutup
     notification.innerHTML = `
         <div class="flex items-center justify-between">
             <span>${message}</span>
@@ -625,8 +517,10 @@ function showNotification(message, type = 'info') {
         </div>
     `;
     
+    // Tampilkan pesan di layar
     document.body.appendChild(notification);
     
+    // Hilangkan pesan setelah 5 detik
     setTimeout(() => {
         if (notification.parentElement) {
             notification.remove();
@@ -634,8 +528,9 @@ function showNotification(message, type = 'info') {
     }, 5000);
 }
 
-// Event Listeners
+// Pengawas kejadian (Event Listeners)
 document.addEventListener('click', function(e) {
+    // Tutup popup jika klik di luar area popup
     const modal = document.getElementById('detail-modal');
     if (e.target === modal) {
         closeDetailModal();
@@ -643,14 +538,9 @@ document.addEventListener('click', function(e) {
 });
 
 document.addEventListener('keydown', function(e) {
+    // Tutup popup jika tekan tombol Escape
     if (e.key === 'Escape') {
         closeDetailModal();
     }
 });
 
-// Add window resize listener to handle chart responsiveness
-window.addEventListener('resize', function() {
-    if (salesChart) {
-        salesChart.resize();
-    }
-});
